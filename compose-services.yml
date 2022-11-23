@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
 
-  postgres-datalab:
+  postgres-powerflows:
     container_name: ${pg_container_name}
     hostname: ${pg_hostname}
     image: docker.io/library/postgres:14
@@ -18,24 +18,9 @@ services:
       - ${pg_volumes1}
 
 
-  db2-datalab:
-    container_name: ${db2_container_name}
-    hostname: ${db2_hostname}
-    image: docker.io/ibmcom/db2
-    privileged: true
-    restart: always
-    environment:
-      DB2INST1_PASSWORD: ${db2_DB2INST1_PASSWORD}
-      LICENSE: ${db2_LICENSE}
-      DBNAME: ${db2_DBNAME}
-    ports:
-      - ${db2_ports}
-    networks:
-      - ${global_services_network}
-    volumes:
-      - ${db2_volumes1}
 
-  minio-datalab:
+
+  minio-powerflows:
     container_name: ${minio_container_name}
     hostname: ${minio_hostname}
     image: quay.io/minio/minio
@@ -52,26 +37,7 @@ services:
       - ${minio_volumes1}
     command: ${minio_command1}
 
-
-  neo4j-datalab:
-    container_name: ${neo_4j_container_name}
-    hostname: ${neo_4j_hostname}
-    image: docker.io/neo4j:latest
-    restart: always
-    environment:
-      NEO4J_AUTH: ${neo_4j_NEO4J_AUTH}
-    ports:
-      - ${neo_4j_ports1}
-      - ${neo_4j_ports2}
-    networks:
-      - ${global_services_network}
-    volumes:
-      - ${noe4j_volumes1}
-      - ${noe4j_volumes2}
-      - ${noe4j_volumes3}
-      - ${noe4j_volumes4}
-
-  restapi-datalab:
+  restapi-powerflows:
     container_name: ${api_container_name}
     hostname: ${api_hostname}
     build:
@@ -85,25 +51,9 @@ services:
     networks:
       - ${global_services_network}
     depends_on:
-      - "db2-datalab"
-      - "minio-datalab"
-      - "postgres-datalab"
+      - "minio-powerflows"
+      - "postgres-powerflows"
     command: ${api_command1}
-
-#monitoring services
-  prom_exporter_db2:
-    container_name: ${promexp_db2_container_name}
-    hostname: ${promexp_db2_hostname}
-    build:
-      context: ${promexp_db2_context}
-      dockerfile: ${promexp_db2_dockerfile}
-    restart: always
-    ports:
-      - ${promexp_db2_ports1}
-    networks:
-      - ${global_services_network}
-    depends_on:
-      - "db2-datalab"
 
 
   prom_exporter_pg:
@@ -118,7 +68,7 @@ services:
     networks:
       - ${global_services_network}
     depends_on:
-      - "postgres-datalab"
+      - "postgres-powerflows"
 
   prom_exporter_node:
     container_name: ${promexp_node_container_name}
@@ -140,7 +90,7 @@ services:
       - ${global_services_network}
 
 
-  promserver-datalab:
+  promserver-powerflows:
     container_name: ${promserver_container_name}
     hostname: ${promserver_hostname}
     image: docker.io/prom/prometheus
@@ -155,7 +105,7 @@ services:
 #      - '--config.file=/etc/prometheus/prometheus.yml  --log.level=debug'
 
 
-  grafana-datalab:
+  grafana-powerflows:
     container_name: ${grafana_container_name}
     hostname: ${grafana_hostname}
     image: docker.io/grafana/grafana
@@ -167,65 +117,8 @@ services:
     volumes:
       - ${grafana_volumes1}
 
-#delta lakehouse services
-  airflow:
-    build: ${airflow_build}
-    restart: unless-stopped
-    environment:
-      - AIRFLOW__CORE__FERNET_KEY=${airflow_AIRFLOW__CORE__FERNET_KEY}
-      - AIRFLOW_HOME=${airflow_AIRFLOW_HOME}
-    ports:
-      - ${airflow_ports1}
-    volumes:
-      - ${airflow_volumes}
-    command: ${airflow_command}
-
-  spark-master:
-    build: ${spark_m_build}
-    restart: unless-stopped
-    ports:
-      - ${spark_m_ports1}
-      - ${spark_m_ports2}
-      - ${spark_m_ports3}
-      - ${spark_m_ports4}
-    command: ${spark_m_command}
-
-  spark-worker:
-    build: ${spark_w_build}
-    restart: unless-stopped
-    ports:
-      - ${spark_w_ports1}
-    command: ${spark_w_command}
-
-  presto:
-    build: ${presto_build}
-    ports:
-      - ${presto_ports1}
-    volumes:
-      - ${presto_volumes1}
-      - ${presto_volumes2}
-
-  presto-worker:
-    build: ${presto_w_build}
-    volumes:
-      - ${presto_w_volumes1}
-      - ${presto_w_volumes2}
-
-  superset:
-    image: arezamoosavi/superset:latest
-    container_name: ${superset_container_name}
-    environment:
-      ADMIN_USERNAME: ${superset_ADMIN_USERNAME}
-      ADMIN_PWD: ${superset_ADMIN_PWD}
-    ports:
-      - ${superset_ports1}
-    volumes:
-      - ${superset_volumes1}
-    restart: unless-stopped
-
-
 
 
 networks:
-  datalab-network:
+  powerflows-network:
     driver: bridge

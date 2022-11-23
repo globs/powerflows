@@ -5,3 +5,4 @@ ibm_db
 flask
 flask_cors
 gunicorn
+pysqlite3 

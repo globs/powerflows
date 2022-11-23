@@ -1,0 +1,1 @@
+sudo docker-compose --env-file  ./services.env -f compose-services.yml $1 $2 $3
