@@ -1,5 +1,8 @@
 
 #https://www.postgresqltutorial.com/postgresql-tutorial/postgresql-json/
+import sqlite3
+import json
+import logging
 
 class SecretsManager(object):
     def __init__(self ):
@@ -23,15 +26,9 @@ class SecretsManager(object):
                     create_date DEFAULT CURRENT_TIMESTAMP
                  )
                  """)
-                 #add env secrets for pg
-                json_secret_internal_pg = {
-                "type": 78912,
-                "name": "Jason Sweet",
-                "credentials": {"host": "XX", "port": "X", "user":"XXX", "password":"XXXXX", "db":"powerflows", "schema": "public"}
-                }
-                conn.execute(f"INSERT INTO tsecrets (NAME, SECRET_JSON) \
-                VALUES ('internal pg', {json.dumps(json_secret_internal_pg)})");
-        
+            json_secret_internal_pg = {"type": 78912,"name": "Jason Sweet","credentials": {"host": "XX", "port": "X", "user":"XXX", "password":"XXXXX", "db":"powerflows", "schema": "public"}}
+            conn.execute(f"INSERT INTO tsecrets (NAME, SECRET_JSON) VALUES ('internal pg', {json.dumps(json_secret_internal_pg)})")
+    
 
 
     def pullSecret(self, name):

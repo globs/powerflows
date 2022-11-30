@@ -2,41 +2,6 @@ version: '3.7'
 
 services:
 
-  postgres-powerflows:
-    container_name: ${pg_container_name}
-    hostname: ${pg_hostname}
-    image: docker.io/library/postgres:14
-    restart: always
-    environment:
-      POSTGRES_USER: ${pg_POSTGRES_USER}
-      POSTGRES_PASSWORD: ${pg_POSTGRES_PASSWORD}
-    ports:
-      - ${pg_ports1}
-    networks:
-      - ${global_services_network}
-    volumes:
-      - ${pg_volumes1}
-
-
-
-
-  minio-powerflows:
-    container_name: ${minio_container_name}
-    hostname: ${minio_hostname}
-    image: quay.io/minio/minio
-    restart: always
-    environment:
-      MINIO_ROOT_USER: ${minio_MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${minio_MINIO_ROOT_PASSWORD}
-    ports:
-      - ${minio_ports1}
-      - ${minio_ports2}
-    networks:
-      - ${global_services_network}
-    volumes:
-      - ${minio_volumes1}
-    command: ${minio_command1}
-
   restapi-powerflows:
     container_name: ${api_container_name}
     hostname: ${api_hostname}
@@ -50,75 +15,13 @@ services:
       - ${api_ports1}
     networks:
       - ${global_services_network}
-    depends_on:
-      - "minio-powerflows"
-      - "postgres-powerflows"
+#    depends_on:
+#      - "minio-powerflows"
+#      - "postgres-powerflows"
     command: ${api_command1}
 
 
-  prom_exporter_pg:
-    container_name: ${promexp_pg_container_name}
-    hostname: ${promexp_pg_hostname}
-    image: quay.io/prometheuscommunity/postgres-exporter
-    restart: always
-    environment:
-      DATA_SOURCE_NAME: ${promexp_pg_DATA_SOURCE_NAME}
-    ports:
-      - ${promexp_pg_ports1}
-    networks:
-      - ${global_services_network}
-    depends_on:
-      - "postgres-powerflows"
-
-  prom_exporter_node:
-    container_name: ${promexp_node_container_name}
-    hostname: ${promexp_node_hostname}
-    image: docker.io/prom/node-exporter:latest
-    restart: always
-    volumes:
-    - ${promexp_node_volumes1}
-    - ${promexp_node_volumes2}
-    - ${promexp_node_volumes3}
-    command:
-      - ${promexp_node_command1}
-      - ${promexp_node_command2}
-      - ${promexp_node_command3}
-      - ${promexp_node_command4}
-    ports:
-      - ${promexp_node_ports}
-    networks:
-      - ${global_services_network}
-
-
-  promserver-powerflows:
-    container_name: ${promserver_container_name}
-    hostname: ${promserver_hostname}
-    image: docker.io/prom/prometheus
-    restart: always
-    ports:
-      - ${promserver_ports}
-    networks:
-      - ${global_services_network}
-    volumes:
-      - ${promserver_volume1}
-#    command:
-#      - '--config.file=/etc/prometheus/prometheus.yml  --log.level=debug'
-
-
-  grafana-powerflows:
-    container_name: ${grafana_container_name}
-    hostname: ${grafana_hostname}
-    image: docker.io/grafana/grafana
-    restart: always
-    ports:
-      - ${grafana_ports}
-    networks:
-      - ${global_services_network}
-    volumes:
-      - ${grafana_volumes1}
-
-
-
+ 
 networks:
   powerflows-network:
     driver: bridge

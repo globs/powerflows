@@ -1,4 +1,4 @@
-from common.secrets import SecretsManager
+from common.secrets.secret import SecretsManager
 import logging
 import common.settings
 import traceback
