@@ -12,7 +12,7 @@ from manager.load_config_manager import LoaderConfigManager
 app = Flask(__name__)
 cors = CORS(app)
 app.debug = True
-loaderManager = LoaderConfigManager()
+#loaderManager = LoaderConfigManager()
 
 @app.route('/api/v1/docs',methods = ['POST', 'GET'])
 def get_docs():

@@ -38,6 +38,11 @@ def init_logging():
 
 csv_separator=','
 
+DEFAULT_PG_SECRET_NAME='PostGreSQL Default'
+DEFAULT_MINIO_SECRET_NAME='Minio Default'
+
+
+
 db_servers = """
 [
     {
@@ -72,6 +77,14 @@ db_servers = """
     }
     ]
 """
+
+
+
+
+
+
+####old
+
 
 def getdbcred(dbtype):
     # Transform json input to python objects
@@ -118,6 +131,6 @@ db_transfers = """
     ]
 """
 
-print(os.getenv('MINIO_CREDS_JSON'))
+#print(os.getenv('MINIO_CREDS_JSON'))
 
 minio_creds=json.loads(str(os.getenv('MINIO_CREDS_JSON'))) #{"url":"159.8.82.244:9000","accessKey":"VrpJ1vhxchPyVztU","secretKey":"pTk0BG4ihEY5NdFXbF6QWCnvMo6v9yMY","api":"s3v4","path":"auto"}

@@ -1,12 +1,11 @@
-from common.orchestration.jobs.job_impl_dbupload import JobDBUpload
 
+import json
 
 
 class FlowJob(object):
     def __init__(self, json_settings):
-        self.config = json_settings
-        #allocate the right connection(s)
-        pass
+        self.config_dict = json_settings
+        
 
     def rolloutJob(self):
         pass
@@ -23,9 +22,3 @@ class FlowJob(object):
 
     def __exit__(self, type, value, traceback):
         self.traceStop()
-
-    def getJobImpl(self):
-        if self.config['jobtype'] == 'dbupload':
-            return None JobDBUpload(self.config)#ConnectionPG(self.credentials)
-        else
-            raise ValueError(costype)

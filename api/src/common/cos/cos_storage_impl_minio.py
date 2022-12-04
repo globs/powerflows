@@ -2,12 +2,14 @@ import logging
 import common.settings
 import traceback
 from minio import Minio
+from common.cos.cos_storage import CosStorage
 import json
 
 
-class CosStorageMinio(object):
+class CosStorageMinio(CosStorage):
     def __init__(self, credentials):
         super().__init__(credentials)
+        self.connect()
 
     def connect(self):
         # Create client with access and secret key.
@@ -17,15 +19,15 @@ class CosStorageMinio(object):
         secure=False)
         buckets = self.client.list_buckets()
         for bucket in buckets:
-            print(bucket.name, bucket.creation_date)
+            logging.info(f"Found Bucket: {bucket.name} created at: {bucket.creation_date}")
 
     def disconnect(self):
         #close self connexion
         pass    
 
-    def uploadStringObjectData(self, params):
+    def downloadStringObjectData(self, params):
         # Get data of an object.
-        bucket = params['bucket']
+        bucket = params['bucketname']
         objectname = params['objectname']
         string = None
         response = None
@@ -42,7 +44,7 @@ class CosStorageMinio(object):
                 response.release_conn()
             return string
 
-    def downloadStringObjectData(self, upload_params):
+    def uploadStringObjectData(self, upload_params):
         pass
 
     def __enter__(self):

@@ -1,4 +1,3 @@
-from common.cos.cos_storage_impl_minio import CosStorageMinio
 
 class CosStorage(object):
     def __init__(self, credentials):
@@ -14,11 +13,4 @@ class CosStorage(object):
     def disconnect(self):
         #close self connexion
         pass    
-
-
-    def getStorageImplem(self, costype):
-        if costype == self.credentials['costype']:
-            return CosStorageMinio(self.credentials)
-        else
-            raise ValueError(costype)
 

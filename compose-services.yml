@@ -8,13 +8,15 @@ services:
     build:
       context: ${api_context}
       dockerfile: ${api_dockerfile}
-    restart: always
+    restart: on-failure
     env_file:
       - ${api_env_file}
     ports:
       - ${api_ports1}
     networks:
       - ${global_services_network}
+    volumes:
+      - /data/powerflows:/tmp/result_files
 #    depends_on:
 #      - "minio-powerflows"
 #      - "postgres-powerflows"

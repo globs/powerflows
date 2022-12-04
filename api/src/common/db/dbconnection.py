@@ -1,10 +1,8 @@
-from common.connections.connection_impl_pg import ConnectionPG
 
 
-
-class Connection(object):
+class DBConnection(object):
     def __init__(self, secretname):
-        self.credentials = credentials
+        self.secretname = secretname
         self.connexion = None
         self.utils = None
         
@@ -26,8 +24,3 @@ class Connection(object):
     def uploadFromCosStorage(self, upload_params):
         pass
 
-    def getConnectionImpl(self, dbtype):
-        if dbtype == self.credentials['dbtype']:
-            return ConnectionPG(self.credentials)
-        else
-            raise ValueError(costype)

@@ -16,15 +16,13 @@ def singleton(cls):
 @singleton    
 class DBPooledConnector():
 
-    def __init__(self):
+    def __init__(self, dbcreds):
         logging.info("PostgreSQL connection pool initialized")
-        #TODO put params in settings/env file
-        logging.info( common.settings.getdbcred('pg'))
         self.pg_pool = psycopg2.pool.ThreadedConnectionPool(5, 50, 
-                                    user = common.settings.getdbcred('pg')['creds']['pg_user'],
-                                    password = common.settings.getdbcred('pg')['creds']['pg_password'],
-                                    host = common.settings.getdbcred('pg')['creds']['pg_host'],
-                                    port = common.settings.getdbcred('pg')['creds']['pg_port'],
-                                    database = common.settings.getdbcred('pg')['creds']['pg_app_db'])
+                                    user = dbcreds['pg_user'],
+                                    password = dbcreds['pg_pwd'],
+                                    host = dbcreds['pg_host'],
+                                    port = dbcreds['pg_port'],
+                                    database = dbcreds['pg_db'])
         self.pg_pool.autocommit=True
 
