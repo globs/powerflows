@@ -55,6 +55,7 @@ class JobDBUpload(FlowJob):
                 "schema" : jobconfig['config']['schema'],
                 "table" : jobconfig['config']['table'],
                 "colsep" : jobconfig['config']['colsep'] }
+                logging.info(f'uploading bucket object {objname}')
                 self.db_conn.uploadFromCosStorage(upload_settings, self.cos_conn)
         except Exception as e:
             logging.error(f'something went wrong on job')

@@ -17,12 +17,39 @@ services:
       - ${global_services_network}
     volumes:
       - /data/powerflows:/tmp/result_files
-#    depends_on:
-#      - "minio-powerflows"
+    depends_on:
+      - "redis"
 #      - "postgres-powerflows"
     command: ${api_command1}
 
+  redis:
+    container_name: redis_schedule
+    hostname: redis
+    image: redis:alpine
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_REPLICATION_MODE=master
+    networks:
+      - ${global_services_network}
 
+#to add in compose file
+  job-delegation:
+    container_name: job-delegation
+    hostname: job-delegation
+    build:
+      context: ${api_context}
+      dockerfile:  ${api_dockerfile}
+    ports:
+      - "8888:8888"
+    depends_on:
+      - "redis"
+    networks:
+      - ${global_services_network}
+    restart: 'always'
+    command: celery -A common.orchestration.jobcontrol.task_job worker --concurrency=100 -Q default,qa --loglevel=debug 
+  #  entrypoint: celery flower --broker=redis://guest:guest@redis:6379/0 --port=5555
  
 networks:
   powerflows-network:

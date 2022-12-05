@@ -133,4 +133,4 @@ db_transfers = """
 
 #print(os.getenv('MINIO_CREDS_JSON'))
 
-minio_creds=json.loads(str(os.getenv('MINIO_CREDS_JSON'))) #{"url":"159.8.82.244:9000","accessKey":"VrpJ1vhxchPyVztU","secretKey":"pTk0BG4ihEY5NdFXbF6QWCnvMo6v9yMY","api":"s3v4","path":"auto"}
+#minio_creds=json.loads(str(os.getenv('MINIO_CREDS_JSON'))) #{"url":"159.8.82.244:9000","accessKey":"VrpJ1vhxchPyVztU","secretKey":"pTk0BG4ihEY5NdFXbF6QWCnvMo6v9yMY","api":"s3v4","path":"auto"}

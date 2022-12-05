@@ -2,13 +2,17 @@ from flask import send_file
 from flask import Flask
 from flask import request
 from flask_cors import CORS
+import common.utils
 import io, json 
 import base64
 import common.settings
 import logging
 from manager.load_config_manager import LoaderConfigManager
+from common.orchestration.jobcontrol.config import app
+
 
 #Actual flask code
+celery=app
 app = Flask(__name__)
 cors = CORS(app)
 app.debug = True
@@ -18,7 +22,17 @@ app.debug = True
 def get_docs():
     return 'docs to be done'
 
-    
+
+@app.route('/api/v1/pingcelery',methods = ['POST', 'GET'])
+def ping_celery():
+    content_type = request.headers.get('Content-Type')
+    if (content_type == 'application/json'):
+        json_dict = request.json
+        logging.info(f"Json dict: {json_dict}")
+    uuid = common.utils.gen_uuid()
+    celery.send_task(name='ping_async' ,args=(uuid,json_dict,), queue='qa', routing_key='qa.test')
+    return 'dummy task submitted'
+
 
 @app.route('/api/v1/runjob_manual',methods = ['POST', 'GET'])
 def run_job_manual():

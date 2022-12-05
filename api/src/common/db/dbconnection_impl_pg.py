@@ -62,7 +62,10 @@ class DBConnexionPG(DBConnection):
 
     def uploadFromCosStorage(self, upload_params, cos_connection):
         #bucketname, objectname, pg_schema, pg_table, csv_colsep
-        self.insertRawCSVToDB(str(cos_connection.downloadStringObjectData(upload_params)),
+        logging.info('Downloading cos object locally')
+        str_data = str(cos_connection.downloadStringObjectData(upload_params))
+        logging.info(f'Downloaded object successfuly, starting upload to database : {str_data[1:10]}')
+        self.insertRawCSVToDB(str_data,
         upload_params['schema'],
         upload_params['table'],
         separator=upload_params['colsep'], 
@@ -83,6 +86,7 @@ class DBConnexionPG(DBConnection):
         strIO = io.StringIO()
         strIO.write(rawdata)
         strIO.seek(0)
+        logging.info('Starting upload to db')
         self.insertStringIOToDB(strIO, target_schema, target_table, columns, separator)
 
     def insertStringIOToDB(self, stringio_data, target_schema, target_table, columns, separator):
@@ -97,6 +101,7 @@ class DBConnexionPG(DBConnection):
         finally:
             cursor.close()  
             cnn.commit()
+            logging.info('String io upload to db done')
        #     DBPooledConnector().pg_pool.putconn(cnn)
 
     def get_table_cols_list(self, tabname, filteredcols=None):

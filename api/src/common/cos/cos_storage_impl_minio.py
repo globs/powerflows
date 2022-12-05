@@ -34,7 +34,7 @@ class CosStorageMinio(CosStorage):
         try:
             response = self.client.get_object(bucket, objectname)
             #beware of headers in csv file TODO create param
-            string = response.read().decode('utf-8').split('\n', 1)[1]
+            string = response.read().decode('utf-8') #.split('\n', 1)[1]
             #logging.debug(string)
         finally:
             if response is None:
