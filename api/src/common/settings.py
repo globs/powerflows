@@ -41,7 +41,8 @@ csv_separator=','
 DEFAULT_PG_SECRET_NAME='PostGreSQL Default'
 DEFAULT_MINIO_SECRET_NAME='Minio Default'
 
-
+JOB_CONFIG_FORMAT_YAML='yaml'
+JOB_CONFIG_FORMAT_JSON='json'
 
 db_servers = """
 [

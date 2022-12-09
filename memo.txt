@@ -1,0 +1,117 @@
+job 
+    connection
+        secret name
+        operations
+            config operation
+
+
+
+    job_settings : {
+        name:"Test import from cos"
+        jobType: 'upload_from_cos'
+        group: 'Db Jobs'
+        connections : 
+        ['minio' ,'pg default']
+        Operations :
+        {
+           {
+            conn : 'pg default' ,
+            order: '1',
+            operation : 'importfromcos' 
+            config : {
+                bucket_name:
+                objectname_s: 
+                schema_name:
+                table_name:
+                cos_connection:
+            }
+           } 
+        }
+    }
+
+     job_settings : {
+        name:"Test execute query"
+        jobType: 'execute_sql'
+        group: 'Db Jobs'
+        connections : 
+        ['pg default']
+        Operations :
+        {
+           {
+            conn : 'pg default' ,
+            order: '1',
+            operation : 'execute' 
+            config : {
+                sql_query: 'select ....'
+                withresults : True
+                result_store: TempTable/File local/cos
+            }
+           } 
+        }
+    }
+
+
+---
+jobconfig:
+  name: job test1
+  kind: uploaddbfromcos
+  group: dbjobs
+  connections:
+  - minio default
+  - postgresql default
+  operations:
+  - operation:
+    	order: 1
+      name: op test1
+      connections:
+      - postgresql default
+      config:
+        bucket_name: xx
+        object_names: xx
+        schema_name: xx
+        table_name: xx
+        connection_cos: minio default
+  - operation:
+    	order: 2
+      name: op test2
+      connections:
+      - postgresql default
+      config:
+        bucket_name: xx
+        object_names: yy
+        schema_name: xx
+        table_name: yy
+        connection_cos: minio defaultqa
+
+---
+# <- yaml supports comments, json does not
+# did you know you can embed json in yaml?
+# try uncommenting the next line
+# { foo: 'bar' }
+
+json:
+  - rigid
+  - better for data interchange
+yaml: 
+  - slim and flexible
+  - better for configuration
+object:
+	key: value
+  array:
+    - null_value:
+    - boolean: true
+    - integer: 1
+    - alias: &example aliases are like variables
+    - alias: *example
+paragraph: >
+   Blank lines denote
+
+   paragraph breaks
+content: |-
+   Or we
+   can auto
+   convert line breaks
+   to save space
+alias: &foo
+  bar: baz
+alias_reuse: *foo 

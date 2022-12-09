@@ -51,6 +51,8 @@ services:
     command: celery -A common.orchestration.jobcontrol.task_job worker --concurrency=100 -Q default,qa --loglevel=debug 
   #  entrypoint: celery flower --broker=redis://guest:guest@redis:6379/0 --port=5555
  
+#monitoring stack
+ 
 networks:
   powerflows-network:
     driver: bridge

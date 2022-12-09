@@ -1,6 +1,8 @@
 import uuid
 import logging
 import common.settings
+import yaml
+import json
 
 def gen_uuid():
     return str(uuid.uuid4())[:32]
@@ -65,3 +67,27 @@ def json_to_csv(data):
         logging.debug(f"Parse result in csv data : {res_csv}")
         return res_csv
 
+def stryaml_to_json(str_yaml):
+    logging.info('converting yaml ')
+    res =yaml.safe_load(str_yaml)
+    return res
+
+def strjson_to_json(str_json):
+    res =json.dumps(str_json)
+    return res
+
+def yaml_to_json(yaml_file, outjsonfilepath):
+    with open(yaml_file, 'r') as file:
+        configuration = yaml.safe_load(file)
+    with open(outjsonfilepath, 'w') as json_file:
+        json.dump(configuration, json_file)
+    output = json.dumps(json.load(open('config.json')), indent=2)
+    return output
+
+def json_to_yaml(json_file, outyamlfilepath):
+    with open('config.json', 'r') as file:
+        configuration = json.load(file)
+    with open('config.yaml', 'w') as yaml_file:
+        yaml.dump(configuration, yaml_file)
+    with open('config.yaml', 'r') as yaml_file:
+        return yaml_file.read()

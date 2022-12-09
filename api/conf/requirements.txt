@@ -9,3 +9,7 @@ pysqlite3
 redis
 celery
 flower
+ratelimit
+backoff
+requests
+pyyaml

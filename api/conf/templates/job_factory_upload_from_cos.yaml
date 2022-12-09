@@ -1,0 +1,31 @@
+---
+jobconfig:
+  name: job test1
+  kind: uploaddbfromcos
+  group: dbjobs
+  connections:
+  - minio default
+  - postgresql default
+  operations:
+  - operation:
+      order: 1
+      name: op test1
+      connections:
+      - postgresql default
+      config:
+        bucket_name: xx
+        object_names: xx
+        schema_name: xx
+        table_name: xx
+        connection_cos: minio default
+  - operation:
+    	order: 2
+      name: op test2
+      connections:
+      - postgresql default
+      config:
+        bucket_name: xx
+        object_names: yy
+        schema_name: xx
+        table_name: yy
+        connection_cos: minio defaultqa

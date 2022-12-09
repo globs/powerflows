@@ -9,7 +9,7 @@ import common.settings
 import logging
 from manager.load_config_manager import LoaderConfigManager
 from common.orchestration.jobcontrol.config import app
-
+from common.orchestration.jobs.jobfactory_decorator import FlowJobFactoryDecorator
 
 #Actual flask code
 celery=app
@@ -26,12 +26,29 @@ def get_docs():
 @app.route('/api/v1/pingcelery',methods = ['POST', 'GET'])
 def ping_celery():
     content_type = request.headers.get('Content-Type')
+    json_dict = None
     if (content_type == 'application/json'):
         json_dict = request.json
         logging.info(f"Json dict: {json_dict}")
     uuid = common.utils.gen_uuid()
     celery.send_task(name='ping_async' ,args=(uuid,json_dict,), queue='qa', routing_key='qa.test')
     return 'dummy task submitted'
+
+@app.route('/api/v1/jobdecorator',methods = ['POST', 'GET'])
+def call_jobfactory_decorator():
+    content_type = request.headers.get('Content-Type')
+    config_rcv_type = None 
+    if content_type == 'text/plain':
+        config_rcv_type = common.settings.JOB_CONFIG_FORMAT_YAML
+    elif content_type == 'application/json':
+        config_rcv_type = common.settings.JOB_CONFIG_FORMAT_JSON
+    raw_str = request.data  
+    logging.info(raw_str)
+    logging.info(f"raw text received: {raw_str}")
+    uuid = common.utils.gen_uuid()
+    job_creator = FlowJobFactoryDecorator(raw_str, config_rcv_type)
+    return job_creator.config_json
+
 
 
 @app.route('/api/v1/runjob_manual',methods = ['POST', 'GET'])
