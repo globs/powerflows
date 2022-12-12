@@ -11,7 +11,7 @@ import common.settings
 class SecretsManager(object):
     def __init__(self ):
         logging.info('Starting secrets manager python backend')
-        self.dbfilepath = '/tmp/result_files/secrets.db'
+        self.dbfilepath = common.settings.SQLLITE_DB_FILE
         self.conn = sqlite3.connect(self.dbfilepath)
         self.checkIfConfigExistsOrInit()
     

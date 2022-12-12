@@ -1,5 +1,5 @@
 from flask import send_file
-from flask import Flask
+from flask import Flask, render_template, request, url_for, flash, redirect
 from flask import request
 from flask_cors import CORS
 import common.utils
@@ -11,9 +11,29 @@ from manager.load_config_manager import LoaderConfigManager
 from common.orchestration.jobcontrol.config import app
 from common.orchestration.jobs.jobfactory_decorator import FlowJobFactoryDecorator
 
+import sqlite3
+from werkzeug.exceptions import abort
+
+def get_db_connection():
+    conn = sqlite3.connect(common.settings.SQLLITE_DB_FILE)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def get_secret(secret_name):
+    conn = get_db_connection()
+    post = conn.execute('SELECT * FROM tsecrets WHERE name = ?',
+                        (secret_name,)).fetchone()
+    conn.close()
+    if post is None:
+        abort(404)
+    return post
+
+
 #Actual flask code
 celery=app
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your secret key'
+
 cors = CORS(app)
 app.debug = True
 #loaderManager = LoaderConfigManager()
@@ -21,6 +41,83 @@ app.debug = True
 @app.route('/api/v1/docs',methods = ['POST', 'GET'])
 def get_docs():
     return 'docs to be done'
+
+# begin Web console
+@app.route('/adminconsole')
+def index():
+    conn = get_db_connection()
+    secrets = conn.execute('SELECT * FROM tsecrets').fetchall()
+    conn.close()
+    return render_template('index.html', secrets=secrets)
+
+@app.route('/create_secret', methods=('GET', 'POST'))
+def create_secret():
+    if request.method == 'POST':
+        title = request.form['name']
+        content = request.form['json_secret']
+
+        if not title:
+            flash('Secret name is required!')
+        else:
+            conn = get_db_connection()
+            conn.execute('INSERT INTO tsecrets (name, json_secret) VALUES (?, ?)',
+                         (title, content))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('index'))
+    return render_template('create_secret.html')
+
+@app.route('/display_secret/<secret_name>')
+def display_secret(secret_name):
+    secret = get_secret(secret_name)
+    return render_template('secret.html', secret=secret)
+
+
+@app.route('/edit_secret/<secret_name>', methods=('GET', 'POST'))
+def edit_secret(secret_name):
+    secret = get_secret(secret_name)
+
+    if request.method == 'POST':
+        name = request.form['name']
+        json_secret = request.form['json_secret']
+
+        if not name:
+            flash('Secret name is required!')
+        else:
+            conn = get_db_connection()
+            conn.execute('UPDATE tsecrets SET name = ?, json_secret = ?'
+                         ' WHERE name = ?',
+                         (name, json_secret, secret_name))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('index'))
+
+    return render_template('edit_secret.html', secret=secret)
+
+
+@app.route('/delete_secret/<secret_name>', methods=('POST',))
+def delete_secret(secret_name):
+    secret = get_secret(secret_name)
+    conn = get_db_connection()
+    conn.execute('DELETE FROM tsecrets WHERE name = ?', (secret_name,))
+    conn.commit()
+    conn.close()
+    flash('"{}" was successfully deleted!'.format(secret['name']))
+    return redirect(url_for('index'))
+
+
+@app.route('/submit_job', methods=('GET', 'POST'))
+def submit_job():
+    if request.method == 'POST':
+        name = request.form['name']
+        job_yaml = request.form['job_yaml']
+        logging.info(f'getting yaml job to be posted {name}: {job_yaml}')
+        flash(f'"{name}" Job was submitted successfully!')
+        return redirect(url_for('index'))
+    return render_template('submit_job.html')
+
+
+#end web console
 
 
 @app.route('/api/v1/pingcelery',methods = ['POST', 'GET'])

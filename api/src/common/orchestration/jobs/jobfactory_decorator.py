@@ -20,7 +20,8 @@ class FlowJobFactoryDecorator(object):
 
     
     def getJobImpl(self):
-        if self.config['type'] == 'uploadfromcos':
-            return JobDBUpload(self.config) #ConnectionPG(self.credentials)
+        
+        if self.config_json['kind'] == 'uploadfromcos':
+            return JobDBUpload(self.config_json) #ConnectionPG(self.credentials)
         else:
             raise ValueError(costype)

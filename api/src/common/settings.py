@@ -38,6 +38,8 @@ def init_logging():
 
 csv_separator=','
 
+SQLLITE_DB_FILE='/tmp/result_files/secrets.db'
+
 DEFAULT_PG_SECRET_NAME='PostGreSQL Default'
 DEFAULT_MINIO_SECRET_NAME='Minio Default'
 
