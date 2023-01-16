@@ -1,5 +1,6 @@
 import logging, decimal, json, os
 from logging.config import dictConfig
+import yaml 
 
 app_log_level=logging.INFO
 logfilepath='../logs/cosTodb.log'
@@ -36,6 +37,12 @@ def init_logging():
 
 	dictConfig(dictconfig)
 
+
+with open("../conf/api/connections.yaml", 'r') as file:
+    connection_capabilties =  configuration = yaml.safe_load(file)
+with open( "../conf/api/app.yaml", 'r') as file:
+    app_conf =  configuration = yaml.safe_load(file)
+    
 csv_separator=','
 
 SQLLITE_DB_FILE='/tmp/result_files/secrets.db'
@@ -81,9 +88,6 @@ db_servers = """
     ]
 """
 
-
-
-connection_capabilties = "../conf/"
 
 
 ####old

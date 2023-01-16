@@ -1,0 +1,27 @@
+---
+  appconstants:
+  - connection_groups:
+    - cos
+    - db
+    - localfs
+  - connection_types:
+    - pg
+    - minio
+    - ibmcos
+    - localfiles
+  - data_formats:
+    - txt
+    - csv
+    - json
+    - yaml 
+    - parquet
+    - orc
+    - arrow
+  - table_formats:
+    - iceberg
+    - delta
+  - default_csv_separator: ","
+  - sqlite_db_file: /tmp/result_files/secrets.db
+  - default_pg_secret_name: PostGreSQL Default
+  - default_minio_secret_name: Minio Default
+  - job_config_format: yaml
