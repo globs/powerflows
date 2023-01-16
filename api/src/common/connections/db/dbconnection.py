@@ -15,6 +15,16 @@ class DBConnection(object):
         #close self connexion
         pass    
 
+    def exportData(self, config):
+        pass
+
+    def importData(self, config):
+        pass
+
+
+    def execute(self, config):
+        pass
+
     def executeQuery(self, query):
         pass
 

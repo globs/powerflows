@@ -42,7 +42,7 @@ services:
       context: ${api_context}
       dockerfile:  ${api_dockerfile}
     ports:
-      - "8888:8888"
+      - "8889:8888"
     depends_on:
       - "redis"
     networks:

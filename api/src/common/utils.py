@@ -69,7 +69,7 @@ def json_to_csv(data):
 
 def stryaml_to_json(str_yaml):
     logging.info('converting yaml ')
-    res =yaml.safe_load(str_yaml)
+    res = yaml.safe_load(str_yaml)
     return res
 
 def strjson_to_json(str_json):
@@ -91,3 +91,40 @@ def json_to_yaml(json_file, outyamlfilepath):
         yaml.dump(configuration, yaml_file)
     with open('config.yaml', 'r') as yaml_file:
         return yaml_file.read()
+
+
+def strjson_get_allkeys(my_json_dict, filter_key=None):
+    res = []
+    for k in my_json_dict:
+        if(isinstance(my_json_dict[k],dict)):
+            if filter_key == None:
+                logging.debug(f"{filter_key} is empty")
+                res.append({k : my_json_dict[k]})
+            elif k  == filter_key:
+                logging.debug(f"{filter_key} found in {k}")
+                res.append({k : my_json_dict[k]})
+            else:
+                logging.debug(f"{filter_key} not found in {k}")
+            res.extend(strjson_get_allkeys(my_json_dict[k], filter_key))
+        elif isinstance(my_json_dict[k],list):
+            for list_items in my_json_dict[k]:
+                if filter_key == None:
+                    logging.debug(f"{filter_key} is empty")
+                    res.append({k : my_json_dict[k]})
+                elif k  == filter_key:
+                    logging.debug(f"{filter_key} found in {k}")
+                    res.append({k : my_json_dict[k]})
+                else:
+                    logging.debug(f"{filter_key} not found in {k}")
+                if(isinstance(list_items,dict)):
+                    res.extend(strjson_get_allkeys(list_items, filter_key))
+        else:
+            if filter_key == None:
+                logging.debug(f"{filter_key} is empty")
+                res.append({k : my_json_dict[k]})
+            elif k  == filter_key:
+                logging.debug(f"{filter_key} found in {k}")
+                res.append({k : my_json_dict[k]})
+            else:
+                logging.debug(f"{filter_key} not found in {k}")
+    return res

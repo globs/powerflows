@@ -1,0 +1,73 @@
+---
+global_capabilities:
+  - data_engine_type: db
+    capabilities:
+    - name: xx
+      config:
+      - name: xx
+        description: xx
+        type: xx
+  - data_engine_type: cos
+    capabilities:
+    - name: xx
+      config:
+      - name: xx
+        description: xx
+        type: xx
+  - data_engine_type: localfs
+    capabilities:
+    - name: writefilefromurl
+      config:
+      - name: source_url
+        description: Url to be fetched
+        type: url
+      - name: target_path
+        description: Local filesystem path to be used
+        type: fspath
+    - name: WriteStringToFile
+      config:
+      - name: filepath
+        description: Source file path to be loaded
+        type: fspath
+    - name: UploadToCOS
+      config:
+      - name: filepath
+        description: 
+        type: 
+      - name: cos_connection
+        description: 
+        type: 
+      - name: cos_bucket
+        description: 
+        type:     
+      - name: cos_object_fullname
+        description: 
+        type: 
+    - name: DownloadFromCOS
+      config:
+      - name: cos_bucket
+        description: bucket name where object is stored
+        type: cosbucket    
+      - name: cos_fullname
+        description: Source file path on cos (in bucket) to be downloaded
+        type: cospath    
+      - name: filepath
+        description: Path of the file where the download result is storaed 
+        type: fspath     
+      linked_connection_types:
+      - cos
+specialized_capabilities:
+  - connection_type: pg
+    capabilities:
+    - name: xx
+      config:
+      - name: xx
+        description: xx
+        type: xx
+  - connection_type: minio
+    capabilities:
+    - name: xx
+      config:
+      - name: xx
+        description: xx
+        type: xx          

@@ -2,7 +2,7 @@ import logging
 import common.settings
 import traceback
 from minio import Minio
-from common.cos.cos_storage import CosStorage
+from common.connections.cos.cos_storage import CosStorage
 import json
 
 

@@ -1,5 +1,5 @@
 import logging
-from common.db.postgres.dbpooledconnector import DBPooledConnector
+from common.connections.db.postgres.dbpooledconnector import DBPooledConnector
 import psycopg2
 import pandas as pd
 import common.settings
@@ -9,8 +9,8 @@ import os
 import json
 import traceback
 import asyncio
-from common.db.dbconnection import DBConnection
-from common.cos.cos_storage import CosStorage
+from common.connections.db.dbconnection import DBConnection
+from common.connections.cos.cos_storage import CosStorage
 from common.secrets.secret import SecretsManager
 
 

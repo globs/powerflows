@@ -83,7 +83,7 @@ db_servers = """
 
 
 
-
+connection_capabilties = "../conf/"
 
 
 ####old

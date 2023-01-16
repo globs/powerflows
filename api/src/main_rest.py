@@ -7,10 +7,10 @@ import io, json
 import base64
 import common.settings
 import logging
-from manager.load_config_manager import LoaderConfigManager
 from common.orchestration.jobcontrol.config import app
 from common.orchestration.jobs.jobfactory_decorator import FlowJobFactoryDecorator
 
+from common.orchestration.jobs.job_factory import FlowJobFactory
 import sqlite3
 from werkzeug.exceptions import abort
 
@@ -36,7 +36,6 @@ app.config['SECRET_KEY'] = 'your secret key'
 
 cors = CORS(app)
 app.debug = True
-#loaderManager = LoaderConfigManager()
 
 @app.route('/api/v1/docs',methods = ['POST', 'GET'])
 def get_docs():
@@ -113,9 +112,16 @@ def submit_job():
         job_yaml = request.form['job_yaml']
         logging.info(f'getting yaml job to be posted {name}: {job_yaml}')
         flash(f'"{name}" Job was submitted successfully!')
-        return redirect(url_for('index'))
+        jf = FlowJobFactory(job_yaml)
+        jf.executeJob()
+        return render_template('submit_job.html', jobs=jf.job_connections_config)
+        #return redirect(url_for('display_job'))
     return render_template('submit_job.html')
 
+
+@app.route('/display_job', methods=('GET', 'POST'))
+def display_job():
+    return render_template('display_job.html')
 
 #end web console
 

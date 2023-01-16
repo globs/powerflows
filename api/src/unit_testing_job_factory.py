@@ -1,3 +1,15 @@
+import common.utils
+import logging
+import common.settings
+import traceback
+from common.orchestration.jobs.job_factory import FlowJobFactory
+
+
+def main():
+    try:
+        common.settings.init_logging()
+        logging.info('Staring commun.utils functions testing')
+        test_yaml =  """
 ---
 jobconfig:
   name: job test1
@@ -35,3 +47,14 @@ jobconfig:
       - obj4
       schema_name: xx
       table_name: yy
+        """
+        jf = FlowJobFactory(job_yaml)
+        jf.executeJob()
+    except:
+        logging.error(traceback.format_exc())
+
+	
+
+
+if __name__ == '__main__':
+    main()

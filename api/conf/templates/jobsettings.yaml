@@ -1,0 +1,38 @@
+---
+jobconfig:
+  name: unit testing localfs capabilities
+  grouping_id: dbjobs
+  connections:
+  - minio default
+  - localfs
+  operations:
+  - capability: 
+      from_connection: localfs
+      name: writefilefromurl
+      order: 1
+      name: download from url test
+      config:
+      - parameter:
+        name: source_url
+        value: http://www.google.com
+      - parameter: 
+        name: target_path
+        value: '/data/test_ping_google.txt'
+  - capability: 
+      from_connection: localfs
+      order: 2
+      name : downloadfilefromurl
+      name: download from cos test
+      config:
+      - parameter:
+        name: cos_connection
+        value: minio default
+      - parameter: 
+        name: cos_bucket
+        value : dbrawdata
+      - parameter: 
+        name: cos_object_fullname
+        value: tpch/tpch/lineitem/csv/lineitem.tbl.1.csv
+      - parameter: 
+        name: filepath
+        value: /data/test_download_minio_lineitem.csv

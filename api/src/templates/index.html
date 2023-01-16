@@ -2,9 +2,10 @@
 
 {% block content %}
     <h1>{% block title %} Powerflows admin console {% endblock %}</h1>
+    <h2>Secrets</h2>
     {% for secret in secrets %}
     <a href="{{ url_for('display_secret', secret_name=secret['name']) }}">
-        <h2>{{ secret['name'] }}</h2>
+        <h3>{{ secret['name'] }}</h3>
         <span class="badge badge-primary">{{ secret['create_date'] }}</span>
     </a><br>
     <a class="btn btn-primary" href="{{ url_for('edit_secret', secret_name=secret['name']) }}">
@@ -17,4 +18,6 @@
     </form>
     <hr>
     {% endfor %}
+    <h2>Jobs</h2>
+    
 {% endblock %}
