@@ -1,25 +1,14 @@
-from common.orchestration.jobs.job import FlowJob
-from common.orchestration.jobs.job_impl_dbupload import JobDBUpload
+#from common.orchestration.jobs.job import FlowJob
+#from common.orchestration.jobs.job_impl_dbupload import JobDBUpload
 from common.secrets.secret import SecretsManager
+from common.connections.connection_factory import ConnectionFactory
 import logging
 import common.utils
 import importlib
+import traceback 
 
 
-connection_modules= [
-{
-"type":"pg",
-"module": "common."
-},
-{
-"type":"minio",
-"module": "common."
-},
-{
-"type":"localfs",
-"module": "common."
-}
-]
+
 
 
 class FlowJobFactory(object):
@@ -50,18 +39,37 @@ class FlowJobFactory(object):
         self.job_operations_config = self.json_config['jobconfig']['operations']
 
     def executeJob(self):
-        for connection in self.job_connections_config:
-            logging.info(f'instanciation connection {connection} ')
-        for operation in self.job_operations_config:
-            logging.info(f'instanciation operation {operation} ')
-        module = importlib.import_module('common.orchestration.jobs.job')
-        class_ = getattr(module, 'FlowJob')
-        dummy_settings = {}
-        instance = class_(dummy_settings)
+        res = {
+            "global_status":"Successful",
+            "details":""
+        }
+        logging.info(f"""Starting Job execution: 
+        Connections: {self.job_connections_config}
+        Operations; {self.job_operations_config}
+        """)
+        results = []
+        try:
+            for connection in self.job_connections_config:
+                logging.info(f'instanciation connection {connection} ')
+            for operation in self.job_operations_config:
+                logging.info(f'instanciation operation {operation} ')
+                logging.info(f"instantiating connexion {operation['capability']['from_connection']}")
+                connection_engine = ConnectionFactory(operation['capability']['from_connection']).getConnectionImplFromSecret()
+                logging.info(f"Calling operation {operation['capability']['name']}")
+                method_ = getattr(connection_engine, operation['capability']['name'])
+                self.validate_job_config(operation['capability']['config'])
+                results.append(method_(operation['capability']['config']))
+        except Exception as e:
+            logging.error(f"Error while executing job configuration: ${e}")
+            traceback.print_exc()
+            res['status'] = 'Failed'
+            res['details'] = str(e)
+        finally:
+            res['job_results'] = results
+            #TODO continue jobs if not mandatory execution
+            return res
 
-
-    def InstanciateJob(self):
-        if self.config['type'] == 'uploadfromcos':
-            return JobDBUpload(self.config) #ConnectionPG(self.credentials)
-        else:
-            raise ValueError(costype)
+    #TODO Check config with config file conf/api/connections.yaml (parameters part) implement in common.utils if needed
+    #TODO Raise exception if error 
+    def validate_job_config(self, job_config_json):
+        pass

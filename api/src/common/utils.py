@@ -128,3 +128,12 @@ def strjson_get_allkeys(my_json_dict, filter_key=None):
             else:
                 logging.debug(f"{filter_key} not found in {k}")
     return res
+
+
+#App settings and referentials YAML utils
+def getParameterValueFromJobConfig(jobconfig, parameter_name):
+    for parameter in jobconfig:
+        logging.info(f"searching {parameter_name} vs {parameter['name']}")
+        if parameter_name == parameter['name']:
+            return parameter
+    return None

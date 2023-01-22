@@ -8,7 +8,7 @@ import base64
 import common.settings
 import logging
 from common.orchestration.jobcontrol.config import app
-from common.orchestration.jobs.jobfactory_decorator import FlowJobFactoryDecorator
+#from common.orchestration.jobs.jobfactory_decorator import FlowJobFactoryDecorator
 
 from common.orchestration.jobs.job_factory import FlowJobFactory
 import sqlite3

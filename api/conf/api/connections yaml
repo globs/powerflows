@@ -1,3 +1,19 @@
+connection_modules= [
+{
+"type":"pg",
+
+},
+{
+"type":"minio",
+
+"class":
+
+},
+{
+"type":"localfs",
+
+}
+]
 ---
 global_capabilities:
   - data_engine_type: db
@@ -16,7 +32,7 @@ global_capabilities:
         type: xx
   - data_engine_type: localfs
     capabilities:
-    - name: writefilefromurl
+    - name: readFileToString
       config:
       - name: source_url
         description: Url to be fetched
@@ -24,11 +40,25 @@ global_capabilities:
       - name: target_path
         description: Local filesystem path to be used
         type: fspath
-    - name: WriteStringToFile
+    - name: writeStringToFile
       config:
       - name: filepath
         description: Source file path to be loaded
         type: fspath
+    - name: writeRestUrlToFile
+      config:
+      - name: rest_url
+        description: Source url of rest api to be extracted
+        type: url
+        mandatory: true
+      - name: filepath
+        description: target file location (full path)
+        type: fspath
+        mandatory: true
+      - name: payload
+        description: specific payload if there is
+        type: fspath
+        mandatory: false
     - name: UploadToCOS
       config:
       - name: filepath
@@ -56,18 +86,29 @@ global_capabilities:
         type: fspath     
       linked_connection_types:
       - cos
-specialized_capabilities:
+engines:
   - connection_type: pg
-    capabilities:
+    module: common.connections.db.dbconnection_impl_pg
+    extra_capabilities:
     - name: xx
       config:
       - name: xx
         description: xx
         type: xx
   - connection_type: minio
+    module: common.cos.cos_storage_impl_minio
     capabilities:
     - name: xx
       config:
       - name: xx
         description: xx
-        type: xx          
+        type: xx      
+  - connection_type: localfs
+    module: common.connections.localfs.localfs_connection
+    capabilities:
+    - name: xx
+      config:
+      - name: xx
+        description: xx
+        type: xx      
+ 

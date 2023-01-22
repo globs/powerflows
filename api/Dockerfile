@@ -9,7 +9,7 @@ RUN useradd -ms /bin/bash dbloader
 
 #Install image dependencies
 RUN apt-get -y -qq update \
-    && apt-get -y -qq install make gcc g++ libxml2 \
+    && apt-get -y -qq install make gcc g++ libxml2 libsqlite3-dev\
     && apt-get install -y python3.8 python3-pip python3.8-dev\
     build-essential unixodbc-dev libpq-dev curl\
      nano
@@ -24,6 +24,7 @@ RUN python3.8 -m pip install --upgrade pip \
 
 RUN mkdir /home/dbloader/project/
 COPY src/ /home/dbloader/project/src/
+COPY conf/ /home/dbloader/project/conf/
 RUN mkdir /home/dbloader/project/logs
 RUN chown dbloader:dbloader /home/dbloader/project/logs
 WORKDIR /home/dbloader/project/src/

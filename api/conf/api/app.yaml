@@ -20,8 +20,13 @@
   - table_formats:
     - iceberg
     - delta
+  - operation_parameter_types:
+    - url
+    - fspath
+    - cospath
+    - cosbuket
   - default_csv_separator: ","
-  - sqlite_db_file: /tmp/result_files/secrets.db
-  - default_pg_secret_name: PostGreSQL Default
-  - default_minio_secret_name: Minio Default
-  - job_config_format: yaml
+  - sqlite_db_file: /tmp/result_files/secrets.db #todo use in secrets manager
+  - default_pg_secret_name: PostGreSQL Default #todo use in secrets manager
+  - default_minio_secret_name: Minio Default #todo use in secrets manager
+  - job_config_format: yaml #todo use in rest job route

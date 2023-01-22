@@ -8,21 +8,21 @@ jobconfig:
   operations:
   - capability: 
       from_connection: localfs
-      name: writefilefromurl
+      name: writeRestUrlToFile
       order: 1
-      name: download from url test
+      stepname: download from url to localfilesystem
       config:
       - parameter:
         name: source_url
         value: http://www.google.com
       - parameter: 
         name: target_path
-        value: '/data/test_ping_google.txt'
+        value: '/tmp/result_files/test_ping_google.txt'
   - capability: 
       from_connection: localfs
       order: 2
-      name : downloadfilefromurl
-      name: download from cos test
+      name : UploadToCOS
+      stepname: download from cos test
       config:
       - parameter:
         name: cos_connection
