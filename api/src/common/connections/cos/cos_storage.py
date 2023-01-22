@@ -1,7 +1,7 @@
 
 class CosStorage(object):
-    def __init__(self, credentials):
-        self.credentials = credentials
+    def __init__(self, secretname):
+        self.secretname = secretname
         self.client = None
         self.utils = None
         

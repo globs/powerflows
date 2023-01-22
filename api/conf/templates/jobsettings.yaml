@@ -3,8 +3,9 @@ jobconfig:
   name: unit testing localfs capabilities
   grouping_id: dbjobs
   connections:
-  - minio default
+  - Minio Default
   - localfs
+  - PostGreSQL Default
   operations:
   - capability: 
       from_connection: localfs
@@ -17,7 +18,7 @@ jobconfig:
         value: http://www.google.com
       - parameter: 
         name: target_path
-        value: '/tmp/result_files/test_ping_google.txt'
+        value: /tmp/result_files/test_ping_google.txt
   - capability: 
       from_connection: localfs
       order: 2
@@ -26,13 +27,25 @@ jobconfig:
       config:
       - parameter:
         name: cos_connection
-        value: minio default
+        value: Minio Default
       - parameter: 
         name: cos_bucket
-        value : dbrawdata
+        value : transfers
       - parameter: 
         name: cos_object_fullname
-        value: tpch/tpch/lineitem/csv/lineitem.tbl.1.csv
+        value: powerflows_test.text
       - parameter: 
-        name: filepath
-        value: /data/test_download_minio_lineitem.csv
+        name: source_filepath
+        value: /tmp/result_files/test_ping_google.txt
+  - capability: 
+      from_connection: PostGreSQL Default
+      order: 3
+      name : executeQuery
+      stepname: Test for query execution
+      config:
+      - parameter:
+        name: sql_query
+        value: SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+      - parameter: 
+        name: with_results
+        value : true

@@ -9,6 +9,7 @@ import os
 import json
 import traceback
 import asyncio
+import common.utils
 from common.connections.db.dbconnection import DBConnection
 from common.connections.cos.cos_storage import CosStorage
 from common.secrets.secret import SecretsManager
@@ -36,7 +37,9 @@ class DBConnexionPG(DBConnection):
         #close self connexion
         DBPooledConnector(self.secret_json_dict['credentials']).pg_pool.putconn(self.connexion)    
 
-    def executeQuery(self, sql, withResults=False):
+    def executeQuery(self, config):
+        sql = common.utils.getParameterValueFromJobConfig(config, 'sql_query', 'value')
+        withResults = common.utils.getParameterValueFromJobConfig(config, 'with_results', 'value')
         cnn = self.connexion
         res = []
         logging.info(sql)
@@ -75,6 +78,9 @@ class DBConnexionPG(DBConnection):
     def dropTable(self, tabschema, tabname):
         logging.info(f'Dropping table {tabschema}.{tabname}')
         self.executeQuery(f'DROP TABLE IF EXISTS {tabschema}.{tabname} ;')
+
+    def uploadFileToTableFromLocalfs(self, job_config):
+        
 
     def insertRawCSVToDB(self, rawdata, target_schema, target_table, separator, columns=None, truncate=False):
         if columns is None:

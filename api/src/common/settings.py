@@ -1,6 +1,7 @@
 import logging, decimal, json, os
 from logging.config import dictConfig
 import yaml 
+import sys
 
 app_log_level=logging.INFO
 logfilepath='../logs/cosTodb.log'
@@ -37,12 +38,25 @@ def init_logging():
 
 	dictConfig(dictconfig)
 
+connection_capabilties = None
+app_conf = None
 
-#with open("../conf/api/connections.yaml", 'r') as file:
-#    connection_capabilties =  configuration = yaml.safe_load(file)
-#with open( "../conf/api/app.yaml", 'r') as file:
-#    app_conf =  configuration = yaml.safe_load(file)
-    
+#TODO check internal services liveness here 
+try:
+    with open("../conf/api/connections.yaml", 'r') as file:
+        connection_capabilties =  configuration = yaml.safe_load(file)
+    with open( "../conf/api/app.yaml", 'r') as file:
+        app_conf =  configuration = yaml.safe_load(file)
+except Exception as e:
+    logging.error(f"""
+    Error while import application settings
+    check that files ../conf/api/connections.yaml and ../conf/api/app.yaml exist
+    error message {e}
+    Exiting ...
+    """)    
+    sys.exit(-1)
+
+#TODO init values from yaml previously loaded 
 csv_separator=','
 
 SQLLITE_DB_FILE='/tmp/result_files/secrets.db'

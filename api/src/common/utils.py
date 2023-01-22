@@ -3,6 +3,9 @@ import logging
 import common.settings
 import yaml
 import json
+from common.secrets.secret import SecretsManager
+import traceback
+import importlib
 
 def gen_uuid():
     return str(uuid.uuid4())[:32]
@@ -131,9 +134,39 @@ def strjson_get_allkeys(my_json_dict, filter_key=None):
 
 
 #App settings and referentials YAML utils
-def getParameterValueFromJobConfig(jobconfig, parameter_name):
+def getParameterValueFromJobConfig(jobconfig, parameter_name, member):
     for parameter in jobconfig:
-        logging.info(f"searching {parameter_name} vs {parameter['name']}")
+        logging.info(f"searching parameter {parameter_name} in {parameter['name']}")
         if parameter_name == parameter['name']:
-            return parameter
+            return parameter[member]
     return None
+
+
+def getEngineConfigMember(connection_type, member):
+    for engine in common.settings.connection_capabilties['engines']:
+        logging.info(f"searching engine type {connection_type} in {engine['connection_type']}")
+        if engine['connection_type'] == connection_type:
+            return engine[member]
+    return None
+
+
+def getEngineModuleFromSecretName(secretname):
+    try:
+        secret_manager = SecretsManager()
+        connection_type = secret_manager.getSecretByNameJson(secretname)
+        logging.info(f"Secret for connection type found: {connection_type}")
+        engine_module_name = getEngineConfigMember(connection_type['secret']['type'], 'module')
+        class_name = getEngineConfigMember(connection_type['secret']['type'], 'class')
+        logging.info(f"""
+        #Instantiating Connection engine for
+        #connection type: {connection_type}
+        #engine_module_name: {engine_module_name}
+        #class name : {class_name}
+        """)
+        engine_module = importlib.import_module(engine_module_name)
+        class_ = getattr(engine_module, class_name)
+        instance = class_(secretname)
+        return instance
+    except Exception as e:
+        logging.error(f"Error while instantiating Engine for secret {secretname}: {e}")
+        logging.error(traceback.format_exc())

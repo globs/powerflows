@@ -3,19 +3,23 @@ import common.settings
 import traceback
 from minio import Minio
 from common.connections.cos.cos_storage import CosStorage
+from common.secrets.secret import SecretsManager
 import json
 
 
 class CosStorageMinio(CosStorage):
-    def __init__(self, credentials):
-        super().__init__(credentials)
+    def __init__(self, secretname):
+        super().__init__(secretname)
+        self.secrets_manager = SecretsManager()
+        secret_json_str = self.secrets_manager.getSecretByNameJson(self.secretname)
+        self.secret_json_dict = secret_json_str['secret']
         self.connect()
 
     def connect(self):
         # Create client with access and secret key.
-        self.client = Minio(self.credentials['url'],
-        self.credentials['accessKey'],
-        self.credentials['secretKey'],
+        self.client = Minio(self.secret_json_dict['credentials']['url'],
+        self.secret_json_dict['credentials']['accessKey'],
+        self.secret_json_dict['credentials']['secretKey'],
         secure=False)
         buckets = self.client.list_buckets()
         for bucket in buckets:
@@ -45,7 +49,14 @@ class CosStorageMinio(CosStorage):
             return string
 
     def uploadStringObjectData(self, upload_params):
-        pass
+        res = {
+            "status":"OK",
+            "config": upload_params
+        }
+        try:
+            res['result'] = self.client.fput_object(upload_params['cos_bucket'], upload_params['cos_object_fullname'], upload_params['source_filepath'])
+        finally:
+            return res
 
     def __enter__(self):
         self.connect()

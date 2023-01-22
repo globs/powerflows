@@ -1,28 +1,30 @@
-connection_modules= [
-{
-"type":"pg",
-
-},
-{
-"type":"minio",
-
-"class":
-
-},
-{
-"type":"localfs",
-
-}
-]
 ---
 global_capabilities:
   - data_engine_type: db
     capabilities:
-    - name: xx
+    - name: executeQuery
       config:
-      - name: xx
-        description: xx
-        type: xx
+      - name: sql
+        description: SQL Query to be execute
+        type: sql_query
+      - name: with_results
+        description: This flag tells if the execution is exepected to provid results or not
+        type: boolean
+    - name: uploadFileToTableFromLocalfs
+      config:
+      - name: localfs_connection
+        description: 
+        type: connection
+      - name: infer_structure
+        description: This flag tells if the execution is exepected to provid results or not
+        type: boolean
+      - name: target_schema
+        description: This flag tells if the execution is exepected to provid results or not
+        type: boolean
+      - name: target_schema
+        description: This flag tells if the execution is exepected to provid results or not
+        type: boolean
+
   - data_engine_type: cos
     capabilities:
     - name: xx
@@ -61,7 +63,7 @@ global_capabilities:
         mandatory: false
     - name: UploadToCOS
       config:
-      - name: filepath
+      - name: source_filepath
         description: 
         type: 
       - name: cos_connection
@@ -75,6 +77,9 @@ global_capabilities:
         type: 
     - name: DownloadFromCOS
       config:
+      - name: cos_connection
+        description: 
+        type: 
       - name: cos_bucket
         description: bucket name where object is stored
         type: cosbucket    
@@ -89,6 +94,7 @@ global_capabilities:
 engines:
   - connection_type: pg
     module: common.connections.db.dbconnection_impl_pg
+    class: DBConnexionPG
     extra_capabilities:
     - name: xx
       config:
@@ -96,7 +102,8 @@ engines:
         description: xx
         type: xx
   - connection_type: minio
-    module: common.cos.cos_storage_impl_minio
+    module: common.connections.cos.cos_storage_impl_minio
+    class: CosStorageMinio
     capabilities:
     - name: xx
       config:
@@ -105,6 +112,7 @@ engines:
         type: xx      
   - connection_type: localfs
     module: common.connections.localfs.localfs_connection
+    class: LocalFSManager    
     capabilities:
     - name: xx
       config:

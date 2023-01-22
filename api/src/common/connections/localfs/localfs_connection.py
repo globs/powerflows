@@ -8,7 +8,8 @@ class LocalFSManager(object):
     def __init__(self):
         logging.info('Starting localfilesystem manager')
 
-    
+
+#Internal usage capabilities    
     def readFileToString(self, jobconfig):
         res = {
             "status":"Ok"
@@ -29,8 +30,8 @@ class LocalFSManager(object):
             "status":"Ok"
         }
         try:
-            source_url = common.utils.getParameterValueFromJobConfig(jobconfig, 'source_url')['value']
-            target_path = common.utils.getParameterValueFromJobConfig(jobconfig, 'target_path')['value']
+            source_url = common.utils.getParameterValueFromJobConfig(jobconfig, 'source_url', 'value')
+            target_path = common.utils.getParameterValueFromJobConfig(jobconfig, 'target_path', 'value')
             #payload = common.utils.getParameterValueFromJobConfig(jobconfig, 'payload')
             logging.info(f"""writing file with config 
             ** url: {source_url}
@@ -48,12 +49,34 @@ class LocalFSManager(object):
         finally:
             return res
 
+#End user capability
+#TODO validate configuration
     def UploadToCOS(self, jobconfig):
         res = {
             "status":"Ok"
         }
-        logging.info(f"Uploading to Cloud Object Storage with config {jobconfig}")
-        return res
+        try:
+            cos_engine_secret_name = common.utils.getParameterValueFromJobConfig(jobconfig, 'cos_connection', 'value')
+            logging.info(f"COS engine connection found in configuration: {cos_engine_secret_name}")
+            cos_engine = common.utils.getEngineModuleFromSecretName(cos_engine_secret_name)
+            #TODO create a function to transform input settings to target settings
+            params = {
+                "cos_bucket":common.utils.getParameterValueFromJobConfig(jobconfig, 'cos_bucket', 'value'),
+                "cos_object_fullname":common.utils.getParameterValueFromJobConfig(jobconfig, 'cos_object_fullname', 'value'),
+                "source_filepath": common.utils.getParameterValueFromJobConfig(jobconfig, 'source_filepath', 'value')
+            }
+            logging.info(f"""
+            Uploading to Cloud Object Storage 
+            ** With parameters {params}
+            """)
+            res['result'] = cos_engine.uploadStringObjectData(params)
+        except Exception as e:
+            logging.error(f"Error while Uploading local file to Cloud Object Storage: {e}")
+            logging.error(traceback.format_exc())
+            res['status'] = "Error"
+            res['error_message'] = str(e)
+        finally:
+            return res
 
     def DownloadFromCOS(self, jobconfig):
         res = {
