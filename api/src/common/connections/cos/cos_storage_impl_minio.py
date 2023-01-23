@@ -5,7 +5,8 @@ from minio import Minio
 from common.connections.cos.cos_storage import CosStorage
 from common.secrets.secret import SecretsManager
 import json
-
+from common.decorators.capability_config import capability_configurator
+from common.decorators.dbtrace import trace_to_db
 
 class CosStorageMinio(CosStorage):
     def __init__(self, secretname):
@@ -29,10 +30,12 @@ class CosStorageMinio(CosStorage):
         #close self connexion
         pass    
 
-    def downloadStringObjectData(self, params):
+    @trace_to_db
+    @capability_configurator
+    def downloadStringObjectData(config_map, self, config):
         # Get data of an object.
-        bucket = params['bucketname']
-        objectname = params['objectname']
+        bucket = config_map['bucketname']
+        objectname = config_map['objectname']
         string = None
         response = None
         try:
@@ -48,13 +51,15 @@ class CosStorageMinio(CosStorage):
                 response.release_conn()
             return string
 
-    def uploadStringObjectData(self, upload_params):
+    @trace_to_db
+    @capability_configurator
+    def uploadStringObjectData(config_map, self, config):
         res = {
             "status":"OK",
             "config": upload_params
         }
         try:
-            res['result'] = self.client.fput_object(upload_params['cos_bucket'], upload_params['cos_object_fullname'], upload_params['source_filepath'])
+            res['result'] = self.client.fput_object(config_map['cos_bucket'], config_map['cos_object_fullname'], config_map['source_filepath'])
         finally:
             return res
 

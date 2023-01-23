@@ -141,6 +141,14 @@ def getParameterValueFromJobConfig(jobconfig, parameter_name, member):
             return parameter[member]
     return None
 
+def getMapFromArray(capability_config):
+    res = {}
+    logging.info(capability_config)
+    for parameter in capability_config:
+        logging.info(parameter)
+        res[parameter['name']] = parameter['value']
+    return res
+
 
 def getEngineConfigMember(connection_type, member):
     for engine in common.settings.connection_capabilties['engines']:
@@ -149,6 +157,29 @@ def getEngineConfigMember(connection_type, member):
             return engine[member]
     return None
 
+def getEngineCapabilityConfigMap(connection_type, capability_name, global_search = True):
+    res = {}
+    if global_search:
+        list_to_search = common.settings.connection_capabilties['global_capabilities']
+    else:
+        list_to_search = common.settings.connection_capabilties['engines']
+    for engine in list_to_search:
+        logging.info(f"searching engine type {connection_type} in {engine['connection_type']}")
+        if engine['connection_type'] == connection_type:
+            for capability in engine['capabilities']:
+                logging.info(f"searching capability  {capability_name} in {capability['name']}")
+                if capability['name'] == capability_name:
+                    for parameter in capability['config']:
+                        res[parameter['name']] = parameter['value']
+                    return res
+    return None
+
+def getCapabilityConfigMap(capability, member):
+    for engine in common.settings.connection_capabilties['engines']:
+        logging.info(f"searching engine type {connection_type} in {engine['connection_type']}")
+        if engine['connection_type'] == connection_type:
+            return engine[member]
+    return None
 
 def getEngineModuleFromSecretName(secretname):
     try:

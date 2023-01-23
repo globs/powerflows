@@ -13,7 +13,8 @@ import common.utils
 from common.connections.db.dbconnection import DBConnection
 from common.connections.cos.cos_storage import CosStorage
 from common.secrets.secret import SecretsManager
-
+from common.decorators.capability_config import capability_configurator
+from common.decorators.dbtrace import trace_to_db
 
 class DBConnexionPG(DBConnection):
 
@@ -23,10 +24,17 @@ class DBConnexionPG(DBConnection):
         secret_json_str = self.secrets_manager.getSecretByNameJson(self.secretname)
         self.secret_json_dict = secret_json_str['secret']
         self.connect()
+        self.connection_type = 'pg'
 
     def __del__(self):
         self.disconnect()     
         
+    def __enter__(self):
+        self.connect()
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.disconnect()
 
     def connect(self):
         #affect connexion to self.connexion
@@ -37,12 +45,16 @@ class DBConnexionPG(DBConnection):
         #close self connexion
         DBPooledConnector(self.secret_json_dict['credentials']).pg_pool.putconn(self.connexion)    
 
-    def executeQuery(self, config):
-        sql = common.utils.getParameterValueFromJobConfig(config, 'sql_query', 'value')
-        withResults = common.utils.getParameterValueFromJobConfig(config, 'with_results', 'value')
+    @capability_configurator 
+    def executeQueryInternal(config_map, self, config): 
+        res = {
+            "status": "OK"
+        }  
+        sql = config_map['sql_query']# common.utils.getParameterValueFromJobConfig(config, 'sql_query', 'value')
+        withResults = config_map['with_results']# common.utils.getParameterValueFromJobConfig(config, 'with_results', 'value')
         cnn = self.connexion
-        res = []
-        logging.info(sql)
+        sqlrows = []
+        logging.info(f"Executing query to PostGRESQL :{sql}")
         try:
             cursor = cnn.cursor()    
             cursor.execute(sql)
@@ -50,12 +62,44 @@ class DBConnexionPG(DBConnection):
                 rows = cursor.fetchall()
                 for row in rows:
                     logging.debug(row)
-                    res.append(row)    
+                    sqlrows.append(row)    
             else:
                 cnn.commit()
         except: 
-            logging.error(traceback.format_exc())    
+            logging.error(traceback.format_exc())
+            res['status'] = 'Error'   
         finally:
+            res['result'] = sqlrows
+            cursor.close()            
+        return res        
+
+
+    @trace_to_db
+    @capability_configurator 
+    def executeQuery(config_map, self, config): 
+        res = {
+            "status": "OK"
+        }  
+        sql = config_map['sql_query']# common.utils.getParameterValueFromJobConfig(config, 'sql_query', 'value')
+        withResults = config_map['with_results']# common.utils.getParameterValueFromJobConfig(config, 'with_results', 'value')
+        cnn = self.connexion
+        sqlrows = []
+        logging.info(f"Executing query to PostGRESQL :{sql}")
+        try:
+            cursor = cnn.cursor()    
+            cursor.execute(sql)
+            if withResults:
+                rows = cursor.fetchall()
+                for row in rows:
+                    logging.debug(row)
+                    sqlrows.append(row)    
+            else:
+                cnn.commit()
+        except: 
+            logging.error(traceback.format_exc())
+            res['status'] = 'Error'   
+        finally:
+            res['result'] = sqlrows
             cursor.close()            
         return res        
 
@@ -63,7 +107,9 @@ class DBConnexionPG(DBConnection):
     def offloadToCosStorage(self, offload_params):
         pass
 
-    def uploadFromCosStorage(self, upload_params, cos_connection):
+    @trace_to_db
+    @capability_configurator 
+    def uploadFileToTableFromCos(config_map, self, config, upload_params, cos_connection):
         #bucketname, objectname, pg_schema, pg_table, csv_colsep
         logging.info('Downloading cos object locally')
         str_data = str(cos_connection.downloadStringObjectData(upload_params))
@@ -79,7 +125,34 @@ class DBConnexionPG(DBConnection):
         logging.info(f'Dropping table {tabschema}.{tabname}')
         self.executeQuery(f'DROP TABLE IF EXISTS {tabschema}.{tabname} ;')
 
-    def uploadFileToTableFromLocalfs(self, job_config):
+    @trace_to_db
+    @capability_configurator
+    def uploadFileToTableFromLocalfs(config_map, self, config):
+        res = {
+            "status":"Ok"
+        }
+        try:
+            fs_engine_secret_name = config_map['localfs_connection'] #common.utils.getParameterValueFromJobConfig(jobconfig, 'localfs_connection', 'value')
+            logging.info(f"FS engine connection found in configuration: {fsengine_secret_name}")
+            fsengine = common.utils.getEngineModuleFromSecretName(cos_engine_secret_name)
+            #TODO create a function to transform input settings to target settings
+            params = {
+                "cos_bucket":common.utils.getParameterValueFromJobConfig(jobconfig, 'cos_bucket', 'value'),
+                "cos_object_fullname":common.utils.getParameterValueFromJobConfig(jobconfig, 'cos_object_fullname', 'value'),
+                "source_filepath": common.utils.getParameterValueFromJobConfig(jobconfig, 'source_filepath', 'value')
+            }
+            logging.info(f"""
+            Uploading to Cloud Object Storage 
+            ** With parameters {params}
+            """)
+            res['result'] = cos_engine.uploadStringObjectData(params)
+        except Exception as e:
+            logging.error(f"Error while Uploading local file to Cloud Object Storage: {e}")
+            logging.error(traceback.format_exc())
+            res['status'] = "Error"
+            res['error_message'] = str(e)
+        finally:
+            return res
         
 
     def insertRawCSVToDB(self, rawdata, target_schema, target_table, separator, columns=None, truncate=False):
@@ -131,9 +204,3 @@ class DBConnexionPG(DBConnection):
         return res
 
 
-    def __enter__(self):
-        self.connect()
-        return self
-
-    def __exit__(self, type, value, traceback):
-        self.disconnect()

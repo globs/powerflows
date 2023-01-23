@@ -10,21 +10,47 @@ global_capabilities:
       - name: with_results
         description: This flag tells if the execution is exepected to provid results or not
         type: boolean
+    - name: uploadFileToTableFromCos
+      config:
+      - name: sql
+        description: SQL Query to be execute
+        type: sql_query
+      - name: with_results
+        description: This flag tells if the execution is exepected to provid results or not
+        type: boolean
     - name: uploadFileToTableFromLocalfs
       config:
       - name: localfs_connection
         description: 
         type: connection
+        mandatory: true
+        default_value: localfs
       - name: infer_structure
         description: This flag tells if the execution is exepected to provid results or not
         type: boolean
+        mandatory: false
+        default_value: true
+      - name: header_in_file
+        description: This flag tells if the execution is exepected to provid results or not
+        type: boolean
+        default_value: false
+      - name: field_delimiter
+        description: This flag tells if the execution is exepected to provid results or not
+        type: boolean   
+        mandatory: false
+        default_value: ","     
       - name: target_schema
         description: This flag tells if the execution is exepected to provid results or not
         type: boolean
-      - name: target_schema
+        mandatory: false
+      - name: target_table
         description: This flag tells if the execution is exepected to provid results or not
         type: boolean
-
+        mandatory: false
+      - name: table_cols_list
+        description: This flag tells if the execution is exepected to provid results or not
+        type: boolean
+        mandatory: false
   - data_engine_type: cos
     capabilities:
     - name: xx

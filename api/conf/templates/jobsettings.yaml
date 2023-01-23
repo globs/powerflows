@@ -49,3 +49,22 @@ jobconfig:
       - parameter: 
         name: with_results
         value : true
+  - capability: 
+      from_connection: PostGreSQL Default
+      order: 4
+      name : uploadFileToTableFromLocalfs
+      stepname: Test for query execution
+      config:
+      - parameter:
+        name: localfs_connection
+        value: 
+      - parameter:
+        name: infer_structure
+        value: 
+      - parameter:
+        name: target_schema
+        value: 
+      - parameter:
+        name: target_table
+        value:                 
+

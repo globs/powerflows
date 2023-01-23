@@ -1,6 +1,8 @@
 import logging
 import common.utils
 import requests
+from common.decorators.capability_config import capability_configurator
+from common.decorators.dbtrace import trace_to_db
 
 #TODO use arrow for memory optimisation 
 
@@ -24,15 +26,15 @@ class LocalFSManager(object):
         logging.info(f"writing file with config {jobconfig}")
         return res
 
-    #TODO Automate config parameters loading with conf/api/connections.yaml config file  
-    def writeRestUrlToFile(self, jobconfig):
+    @trace_to_db
+    @capability_configurator
+    def writeRestUrlToFile(config_map, self, config):
         res = {
             "status":"Ok"
         }
         try:
-            source_url = common.utils.getParameterValueFromJobConfig(jobconfig, 'source_url', 'value')
-            target_path = common.utils.getParameterValueFromJobConfig(jobconfig, 'target_path', 'value')
-            #payload = common.utils.getParameterValueFromJobConfig(jobconfig, 'payload')
+            source_url = config_map['source_url'] 
+            target_path =  config_map['target_path']
             logging.info(f"""writing file with config 
             ** url: {source_url}
             ** target file path: {target_path}
@@ -49,27 +51,21 @@ class LocalFSManager(object):
         finally:
             return res
 
-#End user capability
-#TODO validate configuration
-    def UploadToCOS(self, jobconfig):
+    @trace_to_db
+    @capability_configurator
+    def UploadToCOS(config_map, self, config):
         res = {
             "status":"Ok"
         }
         try:
-            cos_engine_secret_name = common.utils.getParameterValueFromJobConfig(jobconfig, 'cos_connection', 'value')
+            cos_engine_secret_name =  config_map['cos_connection'] #common.utils.getParameterValueFromJobConfig(jobconfig, 'cos_connection', 'value')
             logging.info(f"COS engine connection found in configuration: {cos_engine_secret_name}")
             cos_engine = common.utils.getEngineModuleFromSecretName(cos_engine_secret_name)
-            #TODO create a function to transform input settings to target settings
-            params = {
-                "cos_bucket":common.utils.getParameterValueFromJobConfig(jobconfig, 'cos_bucket', 'value'),
-                "cos_object_fullname":common.utils.getParameterValueFromJobConfig(jobconfig, 'cos_object_fullname', 'value'),
-                "source_filepath": common.utils.getParameterValueFromJobConfig(jobconfig, 'source_filepath', 'value')
-            }
             logging.info(f"""
             Uploading to Cloud Object Storage 
             ** With parameters {params}
             """)
-            res['result'] = cos_engine.uploadStringObjectData(params)
+            res['result'] = cos_engine.uploadStringObjectData(config)
         except Exception as e:
             logging.error(f"Error while Uploading local file to Cloud Object Storage: {e}")
             logging.error(traceback.format_exc())
