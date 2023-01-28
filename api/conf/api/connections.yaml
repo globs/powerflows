@@ -58,6 +58,14 @@ global_capabilities:
       - name: xx
         description: xx
         type: xx
+  - data_engine_type: http_request
+    capabilities:
+    - name: performHttpRequest
+      config:
+      - name: requests_list
+        description: list containing dictionnaries with Values operation, parameters, data, root_url, route_path, expected results, result mime
+        type: dictonary_list
+        mandatory: true 
   - data_engine_type: localfs
     capabilities:
     - name: readFileToString
@@ -145,4 +153,12 @@ engines:
       - name: xx
         description: xx
         type: xx      
- 
+  - connection_type: http_request
+    module: common.connections.engines.rest.rest_utils
+    class: RestUtils    
+    capabilities:
+    - name: xx
+      config:
+      - name: xx
+        description: xx
+        type: xx   

@@ -7,7 +7,8 @@ from common.decorators.dbtrace import trace_to_db
 #TODO use arrow for memory optimisation 
 
 class LocalFSManager(object):
-    def __init__(self):
+    def __init__(self, secretname):
+        self.secretname = secretname
         logging.info('Starting localfilesystem manager')
 
 
@@ -30,6 +31,7 @@ class LocalFSManager(object):
     @capability_configurator
     def writeRestUrlToFile(config_map, self, config):
         res = {
+            "capbility" : "writeRestUrlToFile",
             "status":"Ok"
         }
         try:
@@ -48,6 +50,7 @@ class LocalFSManager(object):
             ** Error: {e}
             """)
             res['status'] = "Failed"
+            res['error_message'] = str(e)
         finally:
             return res
 

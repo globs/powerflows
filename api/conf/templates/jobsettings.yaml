@@ -7,7 +7,7 @@ jobconfig:
   - localfs
   - PostGreSQL Default
   operations:
-  - capability: 
+  - capability:
       from_connection: localfs
       name: writeRestUrlToFile
       order: 1
@@ -16,55 +16,84 @@ jobconfig:
       - parameter:
         name: source_url
         value: http://www.google.com
-      - parameter: 
+      - parameter:
         name: target_path
-        value: /tmp/result_files/test_ping_google.txt
-  - capability: 
+        value: "/tmp/result_files/test_ping_google.txt"
+  - capability:
       from_connection: localfs
       order: 2
-      name : UploadToCOS
+      name: UploadToCOS
       stepname: download from cos test
       config:
       - parameter:
         name: cos_connection
         value: Minio Default
-      - parameter: 
+      - parameter:
         name: cos_bucket
-        value : transfers
-      - parameter: 
+        value: transfers
+      - parameter:
         name: cos_object_fullname
         value: powerflows_test.text
-      - parameter: 
+      - parameter:
         name: source_filepath
-        value: /tmp/result_files/test_ping_google.txt
-  - capability: 
+        value: "/tmp/result_files/test_ping_google.txt"
+  - capability:
       from_connection: PostGreSQL Default
       order: 3
-      name : executeQuery
+      name: executeQuery
       stepname: Test for query execution
       config:
       - parameter:
         name: sql_query
         value: SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
-      - parameter: 
+      - parameter:
         name: with_results
-        value : true
-  - capability: 
-      from_connection: PostGreSQL Default
+        value: true
+  - capability:
+      from_connection: HTTP for HitBTC
       order: 4
-      name : uploadFileToTableFromLocalfs
+      name: performHttpRequest
+      stepname: Perform HitBTC Symbols Fetch
+      config:
+      - parameter:
+        name: requests_list
+        value:
+        - url: https://api.hitbtc.com/api/3/public/currency
+          operation: GET
+          parameters: {}
+          data: {}
+          headers: {}
+          result_mime_type: application/json
+          result_expected_params:
+            todo1: definerealstructure to map to result
+          result_save_name: BTCUSDT_hitbtc_symbols
+        - url: https://api.hitbtc.com/api/3/public/ticker
+          operation: GET
+          use_saved_data: BTCUSDT_hitbtc_symbols
+          use_saved_for: parameters
+          use_saved_variable_name: symbols
+          parameters:
+            symbols: BTCUSDT
+          data: {}
+          headers: {}
+          result_mime_type: application/json
+          result_expected_params:
+            todo1: definerealstructure to map to result
+  - capability:
+      from_connection: PostGreSQL Default
+      order: 5
+      name: uploadFileToTableFromLocalfs
       stepname: Test for query execution
       config:
       - parameter:
         name: localfs_connection
-        value: 
+        value:
       - parameter:
         name: infer_structure
-        value: 
+        value:
       - parameter:
         name: target_schema
-        value: 
+        value:
       - parameter:
         name: target_table
-        value:                 
-
+        value:
