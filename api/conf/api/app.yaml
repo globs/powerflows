@@ -20,6 +20,9 @@
   - table_formats:
     - iceberg
     - delta
+  - storage_type:
+    - source_system
+    - job_storage
   - operation_parameter_types:
     - url
     - fspath

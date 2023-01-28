@@ -13,3 +13,5 @@ ratelimit
 backoff
 requests
 pyyaml
+pyarrow
+duckdb

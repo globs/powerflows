@@ -116,15 +116,5 @@ alias: &foo
   bar: baz
 alias_reuse: *foo 
 
-#TODO 
-Serializer with Json parquet SQL capability
-https://blog.jcharistech.com/2020/01/08/how-to-convert-json-to-sql-format-in-python/
 
 
-npm/ng style plugin addon capability:
-- insert placeholders and templates in connexions.yaml
-- insert placeholders python file in connections.engines
-
-capability steps:
-parrallel or sequential execution
-leverage redis/celeri
