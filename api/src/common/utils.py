@@ -146,7 +146,11 @@ def getMapFromArray(capability_config):
     logging.info(capability_config)
     for parameter in capability_config:
         logging.info(parameter)
-        res[parameter['name']] = parameter['value']
+        #TODO fix in job settings yaml file
+        if 'name' in parameter:
+            res[parameter['name']] = parameter['value']
+        else:
+            res[parameter['parameter']['name']] = parameter['parameter']['value']
     return res
 
 

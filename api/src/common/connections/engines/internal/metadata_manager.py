@@ -13,7 +13,10 @@ class MetadataManager(object):
 
     def getAssets(self, config):
         pass
-    
+
+    def getJobs(self, config):
+        pass
+
     def createJob(self, config):
         pass
 

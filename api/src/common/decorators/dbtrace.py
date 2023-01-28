@@ -22,15 +22,21 @@ def trace_to_db(func):
             #TODO use as an obseerver for job termination (socket.IO or websocket server)
             function_name = common.utils.clean_csv_value(func.__name__)
             result_call = common.utils.clean_csv_value(rv)
-            trace_query = f"INSERT INTO public.powerflows_traces (function_name, call_result) VALUES ('{function_name}', '{result_call}')"
-            config = yaml.safe_load(f"""---
+            cleaned_result = result_call[1:100].replace('"',"").replace("'","")
+            cleaned_result = result_call.replace('"',"").replace("'","")
+            trace_query = f"INSERT INTO public.powerflows_traces (function_name, call_result) VALUES ('{function_name}', '{cleaned_result}')"
+            trace_config_syaml= f"""---
             - parameter:
-                name: sql_query
-                value: \"{trace_query}\"
-            - parameter: 
-                name: with_results
-                value : false              
-            """)
+              name: sql_query
+              value: >
+                {trace_query}     
+            - parameter:
+              name: with_results
+              value: false      
+            """
+            logging.info(f"Tracing with str config {trace_config_syaml}")
+
+            config = yaml.safe_load(trace_config_syaml)
             logging.info(f"Tracing with config: {config}")
             pg_internal_engine.executeQueryInternal(config)
             logging.debug(f'Call return: {rv}')

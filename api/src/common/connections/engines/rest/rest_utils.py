@@ -27,11 +27,11 @@ class RestUtils():
     @capability_configurator
     def performHttpRequest(config_map, self, config):
         res = {
-            "capbility" : "performHttpRequest"
-            "calls_resuls" : []
+            "capbility" : "performHttpRequest",
+            "call_result" : None
         }
         for unit_config_map in config_map['requests_list']:
-            res['call_resuls'].append(self.InternalPerformHttpRequest(unit_config_map))
+            res['call_result'] = self.InternalPerformHttpRequest(unit_config_map)
         return res
         
 
@@ -57,12 +57,12 @@ class RestUtils():
             logging.debug("execution get for url:{url}".format(url=url))
             self.nb_api_calls = self.nb_api_calls + 1 
             if config_map['operation'] == 'GET':
-                response = requests.get(url, data=data, params=params, headers=headers, allow_redirects=True)
+                response = requests.get(url, data=json.dumps(data), params=params, headers=headers, allow_redirects=True)
             else:
-                reponse = requests.post(url, data=data, params=params, headers=headers, allow_redirects=True)
-            reponse.raise_for_status()
+                response = requests.post(url, data=json.dumps(data), params=params, headers=headers, allow_redirects=True)
+            response.raise_for_status()
             res['result'] = response.content
-            if not reponse.status_code == 200:
+            if not response.status_code == 200:
                 exit(500)
         except Exception as e:
             logging.error(f"""
