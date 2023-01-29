@@ -10,6 +10,7 @@ import logging
 from common.orchestration.jobcontrol.config import app
 #from common.orchestration.jobs.jobfactory_decorator import FlowJobFactoryDecorator
 
+from common.connections.engines.internal.metadata_manager import MetadataManager
 from common.orchestration.jobs.job_factory import FlowJobFactory
 import sqlite3
 from werkzeug.exceptions import abort
@@ -33,6 +34,7 @@ def get_secret(secret_name):
 celery=app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your secret key'
+md_manager = MetadataManager()
 
 cors = CORS(app)
 app.debug = True
@@ -47,7 +49,16 @@ def index():
     conn = get_db_connection()
     secrets = conn.execute('SELECT * FROM tsecrets').fetchall()
     conn.close()
-    return render_template('index.html', secrets=secrets)
+    rows = md_manager.getTraces() 
+    return render_template('index.html', secrets=secrets, traces=rows)
+
+@app.route('/job_traces')
+def job_traces():
+    rows = md_manager.getTraces() 
+    logging.info(f'job traces meta data {rows}')
+    return render_template('jobtraces.html', traces=rows)
+
+
 
 @app.route('/create_secret', methods=('GET', 'POST'))
 def create_secret():

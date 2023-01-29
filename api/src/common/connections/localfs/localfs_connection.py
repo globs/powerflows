@@ -32,7 +32,8 @@ class LocalFSManager(object):
     def writeRestUrlToFile(config_map, self, config):
         res = {
             "capbility" : "writeRestUrlToFile",
-            "status":"Ok"
+            "status":"Ok",
+            "call_result":None
         }
         try:
             source_url = config_map['source_url'] 
@@ -58,7 +59,8 @@ class LocalFSManager(object):
     @capability_configurator
     def UploadToCOS(config_map, self, config):
         res = {
-            "status":"Ok"
+            "status":"Ok",
+            "call_result": None
         }
         try:
             cos_engine_secret_name =  config_map['cos_connection'] #common.utils.getParameterValueFromJobConfig(jobconfig, 'cos_connection', 'value')
@@ -68,7 +70,7 @@ class LocalFSManager(object):
             Uploading to Cloud Object Storage 
             ** With parameters {params}
             """)
-            res['result'] = cos_engine.uploadStringObjectData(config)
+            res['call_result'] = cos_engine.uploadStringObjectData(config)
         except Exception as e:
             logging.error(f"Error while Uploading local file to Cloud Object Storage: {e}")
             logging.error(traceback.format_exc())
@@ -79,7 +81,8 @@ class LocalFSManager(object):
 
     def DownloadFromCOS(self, jobconfig):
         res = {
-            "status":"Ok"
+            "status":"Ok",
+            "call_result": None
         }
         logging.info(f"Downloading from cloud object storage with config {jobconfig}")
         return res

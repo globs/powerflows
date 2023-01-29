@@ -28,10 +28,10 @@ class RestUtils():
     def performHttpRequest(config_map, self, config):
         res = {
             "capbility" : "performHttpRequest",
-            "call_result" : None
+            "call_result" : []
         }
         for unit_config_map in config_map['requests_list']:
-            res['call_result'] = self.InternalPerformHttpRequest(unit_config_map)
+            res['call_result'].append(self.InternalPerformHttpRequest(unit_config_map))
         return res
         
 
@@ -40,7 +40,7 @@ class RestUtils():
     def InternalPerformHttpRequest(self, config_map):
         res = {
             "status":"Successful",
-            "result": None,
+            "response": None,
             "mime_type":None,
             "config": config_map
         }
@@ -61,7 +61,8 @@ class RestUtils():
             else:
                 response = requests.post(url, data=json.dumps(data), params=params, headers=headers, allow_redirects=True)
             response.raise_for_status()
-            res['result'] = response.content
+            logging.info(f"Response contents {response.content}")
+            res['response'] = response.content
             if not response.status_code == 200:
                 exit(500)
         except Exception as e:

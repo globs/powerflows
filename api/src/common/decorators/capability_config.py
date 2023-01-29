@@ -9,6 +9,10 @@ def capability_configurator(func):
         # pre function call instructions
         logging.info(f"ARGS: {args}")
         config_map = common.utils.getMapFromArray(args[1])
+        placeholder_res_dict = {
+            'statut' : 'Successful',
+            'call_result': None
+        }
         try:
             rv = func(config_map, *args,**kwargs)
         except Exception as e:

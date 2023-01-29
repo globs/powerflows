@@ -79,6 +79,18 @@ jobconfig:
           result_mime_type: application/json
           result_expected_params:
             todo1: definerealstructure to map to result
+        - url: https://api.hitbtc.com/api/3/public/ticker
+          operation: GET
+          use_saved_data: BTCETH_hitbtc_symbols
+          use_saved_for: parameters
+          use_saved_variable_name: symbols
+          parameters:
+            symbols: ETHBTC
+          data: {}
+          headers: {}
+          result_mime_type: application/json
+          result_expected_params:
+            todo1: definerealstructure to map to result
   - capability:
       from_connection: PostGreSQL Default
       order: 5

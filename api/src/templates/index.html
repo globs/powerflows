@@ -2,6 +2,15 @@
 
 {% block content %}
     <h1>{% block title %} Powerflows admin console {% endblock %}</h1>
+
+    {% endfor %}
+    <h2>Latest Job runs history</h2>
+    {% for trace in traces %}
+        <span class="badge badge-primary">{{ trace[0] }} - {{ trace[1] }} - {{ trace[2] }}</span>
+        <br>
+        <b>Trace:</b><p> {{ trace[3] }}</p>
+    {% endfor %}    
+    <hr>
     <h2>Secrets</h2>
     {% for secret in secrets %}
     <a href="{{ url_for('display_secret', secret_name=secret['name']) }}">
@@ -17,7 +26,4 @@
                 onclick="return confirm('Are you sure you want to delete this post?')">
     </form>
     <hr>
-    {% endfor %}
-    <h2>Jobs</h2>
-    
 {% endblock %}

@@ -67,9 +67,9 @@ class DBConnexionPG(DBConnection):
                 cnn.commit()
         except: 
             logging.error(traceback.format_exc())
-            res['status'] = 'Error'   
+            res['status'] = 'Failed'  
         finally:
-            res['result'] = sqlrows
+            res['call_result'] = sqlrows
             cursor.close()            
         return res        
 
@@ -78,7 +78,8 @@ class DBConnexionPG(DBConnection):
     @capability_configurator 
     def executeQuery(config_map, self, config): 
         res = {
-            "status": "OK"
+            "status": "OK",
+            "call_result": None
         }  
         sql = config_map['sql_query']# common.utils.getParameterValueFromJobConfig(config, 'sql_query', 'value')
         withResults = config_map['with_results']# common.utils.getParameterValueFromJobConfig(config, 'with_results', 'value')
@@ -99,7 +100,7 @@ class DBConnexionPG(DBConnection):
             logging.error(traceback.format_exc())
             res['status'] = 'Error'   
         finally:
-            res['result'] = sqlrows
+            res['call_result'] = sqlrows
             cursor.close()            
         return res        
 
@@ -129,7 +130,8 @@ class DBConnexionPG(DBConnection):
     @capability_configurator
     def uploadFileToTableFromLocalfs(config_map, self, config):
         res = {
-            "status":"Ok"
+            "status":"Ok",
+            "call_result":None
         }
         try:
             fs_engine_secret_name = config_map['localfs_connection'] #common.utils.getParameterValueFromJobConfig(jobconfig, 'localfs_connection', 'value')
@@ -145,7 +147,7 @@ class DBConnexionPG(DBConnection):
             Uploading to Cloud Object Storage 
             ** With parameters {params}
             """)
-            res['result'] = cos_engine.uploadStringObjectData(params)
+            res['call_result'] = cos_engine.uploadStringObjectData(params)
         except Exception as e:
             logging.error(f"Error while Uploading local file to Cloud Object Storage: {e}")
             logging.error(traceback.format_exc())
