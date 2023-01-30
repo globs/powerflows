@@ -6,8 +6,16 @@
     - localfs
   - connection_types:
     - pg
+    - mariadb
+    - mysql
+    - db2
+    - oracle
     - minio
     - ibmcos
+    - aws_s3
+    - azure_blob_storage
+    - cassandra
+    - mongodb
     - localfiles
   - data_formats:
     - txt
@@ -33,3 +41,28 @@
   - default_pg_secret_name: PostGreSQL Default #todo use in secrets manager
   - default_minio_secret_name: Minio Default #todo use in secrets manager
   - job_config_format: yaml #todo use in rest job route
+  - type_group:
+    - db: [pg, mysql, mariadb, db2]
+    - localfs: 
+    - cos:
+#TODO use a common.utils function to parse this and get the needed parameter value of operation to fill in     
+  - group_address:
+    - db: 
+ #TODO change to real parameter names values   
+ #TODO standardize capabilities parameters
+      - connection_name
+      - schema
+      - table
+      - column
+    - localfs:
+      - connection_name
+      - folder_path
+      - filename
+      - column_name
+    - cos:
+      - connection_name
+      - bucket_name
+      - folder
+      - object_name
+
+  

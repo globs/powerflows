@@ -136,16 +136,16 @@ def strjson_get_allkeys(my_json_dict, filter_key=None):
 #App settings and referentials YAML utils
 def getParameterValueFromJobConfig(jobconfig, parameter_name, member):
     for parameter in jobconfig:
-        logging.info(f"searching parameter {parameter_name} in {parameter['name']}")
+        logging.debug(f"searching parameter {parameter_name} in {parameter['name']}")
         if parameter_name == parameter['name']:
             return parameter[member]
     return None
 
 def getMapFromArray(capability_config):
     res = {}
-    logging.info(capability_config)
+    logging.debug(capability_config)
     for parameter in capability_config:
-        logging.info(parameter)
+        logging.debug(parameter)
         #TODO fix in job settings yaml file
         if 'name' in parameter:
             res[parameter['name']] = parameter['value']
@@ -156,7 +156,7 @@ def getMapFromArray(capability_config):
 
 def getEngineConfigMember(connection_type, member):
     for engine in common.settings.connection_capabilties['engines']:
-        logging.info(f"searching engine type {connection_type} in {engine['connection_type']}")
+        logging.debug(f"searching engine type {connection_type} in {engine['connection_type']}")
         if engine['connection_type'] == connection_type:
             return engine[member]
     return None
@@ -168,10 +168,10 @@ def getEngineCapabilityConfigMap(connection_type, capability_name, global_search
     else:
         list_to_search = common.settings.connection_capabilties['engines']
     for engine in list_to_search:
-        logging.info(f"searching engine type {connection_type} in {engine['connection_type']}")
+        logging.debug(f"searching engine type {connection_type} in {engine['connection_type']}")
         if engine['connection_type'] == connection_type:
             for capability in engine['capabilities']:
-                logging.info(f"searching capability  {capability_name} in {capability['name']}")
+                logging.debug(f"searching capability  {capability_name} in {capability['name']}")
                 if capability['name'] == capability_name:
                     for parameter in capability['config']:
                         res[parameter['name']] = parameter['value']
@@ -180,7 +180,7 @@ def getEngineCapabilityConfigMap(connection_type, capability_name, global_search
 
 def getCapabilityConfigMap(capability, member):
     for engine in common.settings.connection_capabilties['engines']:
-        logging.info(f"searching engine type {connection_type} in {engine['connection_type']}")
+        logging.debug(f"searching engine type {connection_type} in {engine['connection_type']}")
         if engine['connection_type'] == connection_type:
             return engine[member]
     return None
@@ -189,7 +189,7 @@ def getEngineModuleFromSecretName(secretname):
     try:
         secret_manager = SecretsManager()
         connection_type = secret_manager.getSecretByNameJson(secretname)
-        logging.info(f"Secret for connection type found: {connection_type}")
+        logging.debug(f"Secret for connection type found: {connection_type}")
         engine_module_name = getEngineConfigMember(connection_type['secret']['type'], 'module')
         class_name = getEngineConfigMember(connection_type['secret']['type'], 'class')
         logging.info(f"""

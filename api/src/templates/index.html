@@ -2,13 +2,21 @@
 
 {% block content %}
     <h1>{% block title %} Powerflows admin console {% endblock %}</h1>
-
-    {% endfor %}
     <h2>Latest Job runs history</h2>
     {% for trace in traces %}
         <span class="badge badge-primary">{{ trace[0] }} - {{ trace[1] }} - {{ trace[2] }}</span>
         <br>
-        <b>Trace:</b><p> {{ trace[3] }}</p>
+        <p>
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample{{ trace[0] }}" aria-expanded="false" aria-controls="collapseExample{{ trace[0] }}">
+            Trace Details
+            </button>
+          </p>
+          <div class="collapse" id="collapseExample{{ trace[0] }}">
+            <div class="card card-body">
+                <p> {{ trace[3] }} ({{ trace[3]|length }}</p>
+            </div>
+          </div>
+
     {% endfor %}    
     <hr>
     <h2>Secrets</h2>
@@ -26,4 +34,5 @@
                 onclick="return confirm('Are you sure you want to delete this post?')">
     </form>
     <hr>
+    {% endfor %}
 {% endblock %}

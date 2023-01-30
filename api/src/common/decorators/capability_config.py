@@ -7,10 +7,10 @@ import common.settings
 def capability_configurator(func):
     def with_capability_(*args,**kwargs):
         # pre function call instructions
-        logging.info(f"ARGS: {args}")
+        logging.debug(f"ARGS: {args}")
         config_map = common.utils.getMapFromArray(args[1])
         placeholder_res_dict = {
-            'statut' : 'Successful',
+            'status' : 'Successful',
             'call_result': None
         }
         try:

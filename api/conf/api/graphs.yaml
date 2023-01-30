@@ -1,0 +1,11 @@
+---
+  graph:
+    name:
+    id:
+  contents:
+    - job:
+      id:
+      parents:
+    - graph:
+      id:
+      parents:

@@ -31,9 +31,8 @@ class LocalFSManager(object):
     @capability_configurator
     def writeRestUrlToFile(config_map, self, config):
         res = {
-            "capbility" : "writeRestUrlToFile",
-            "status":"Ok",
-            "call_result":None
+            'status' : 'Successful',
+            'call_result': None
         }
         try:
             source_url = config_map['source_url'] 
@@ -57,10 +56,10 @@ class LocalFSManager(object):
 
     @trace_to_db
     @capability_configurator
-    def UploadToCOS(config_map, self, config):
+    def UploadToCOS(config_map, self, config ):
         res = {
-            "status":"Ok",
-            "call_result": None
+            'status' : 'Successful',
+            'call_result': None
         }
         try:
             cos_engine_secret_name =  config_map['cos_connection'] #common.utils.getParameterValueFromJobConfig(jobconfig, 'cos_connection', 'value')

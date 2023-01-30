@@ -55,9 +55,8 @@ class CosStorageMinio(CosStorage):
     @capability_configurator
     def uploadStringObjectData(config_map, self, config):
         res = {
-            "status":"OK",
-            "config": upload_params,
-            "call_result": None
+            'status' : 'Successful',
+            'call_result': None
         }
         try:
             res['call_result'] = self.client.fput_object(config_map['cos_bucket'], config_map['cos_object_fullname'], config_map['source_filepath'])

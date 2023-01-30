@@ -18,10 +18,12 @@ def trace_to_db(func):
         else:
             logging.debug('Capability executed successfully')
         finally:
+            logging.info('********************************[Capability Started]********************************')
             #TODO Catch real function name
             #TODO use as an obseerver for job termination (socket.IO or websocket server)
             function_name = common.utils.clean_csv_value(func.__name__)
             result_call = common.utils.clean_csv_value(rv)
+            #TODO TRuncate long json results in call_result member
             cleaned_result = result_call[1:100].replace('"',"").replace("'","")
             cleaned_result = result_call.replace('"',"").replace("'","")
             trace_query = f"INSERT INTO public.powerflows_traces (function_name, call_result) VALUES ('{function_name}', '{cleaned_result}')"
@@ -34,11 +36,12 @@ def trace_to_db(func):
               name: with_results
               value: false      
             """
-            logging.info(f"Tracing with str config {trace_config_syaml}")
+            logging.debug(f"Tracing with str config {trace_config_syaml}")
 
             config = yaml.safe_load(trace_config_syaml)
-            logging.info(f"Tracing with config: {config}")
+            logging.debug(f"Tracing with config: {config}")
             pg_internal_engine.executeQueryInternal(config)
             logging.debug(f'Call return: {rv}')
+            logging.info('********************************[Capability Ended]********************************')
         return rv
     return with_function_

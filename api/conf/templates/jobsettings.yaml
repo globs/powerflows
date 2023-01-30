@@ -64,28 +64,14 @@ jobconfig:
           data: {}
           headers: {}
           result_mime_type: application/json
-          result_expected_params:
-            todo1: definerealstructure to map to result
-          result_save_name: BTCUSDT_hitbtc_symbols
+          jobstorage_persist_result: true
+          jobstorage_asset_address: internal.hitbtc_rest.hitbtc_symbols
         - url: https://api.hitbtc.com/api/3/public/ticker
           operation: GET
-          use_saved_data: BTCUSDT_hitbtc_symbols
-          use_saved_for: parameters
-          use_saved_variable_name: symbols
           parameters:
-            symbols: BTCUSDT
-          data: {}
-          headers: {}
-          result_mime_type: application/json
-          result_expected_params:
-            todo1: definerealstructure to map to result
-        - url: https://api.hitbtc.com/api/3/public/ticker
-          operation: GET
-          use_saved_data: BTCETH_hitbtc_symbols
-          use_saved_for: parameters
-          use_saved_variable_name: symbols
-          parameters:
-            symbols: ETHBTC
+            symbols: 
+              - symbol: {{ jobstorage.hitbtc_input.hitbtc_symbols.symbol }}
+          parameter_type: multi-value-simple
           data: {}
           headers: {}
           result_mime_type: application/json

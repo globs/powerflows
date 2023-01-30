@@ -3,5 +3,8 @@ asset:
   id:
   name: 
   asset_type: 
-  asset_address: secretname.container
-  
+  asset_address: secretname.container.asset_name (data_asset), folder...folder.jobname (job), folder...folder.graphname (graph), 
+asset_links:
+  id_parents:
+  id_child:
+  link_type:

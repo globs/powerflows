@@ -48,13 +48,14 @@ class DBConnexionPG(DBConnection):
     @capability_configurator 
     def executeQueryInternal(config_map, self, config): 
         res = {
-            "status": "OK"
-        }  
+            'status' : 'Successful',
+            'call_result': None
+        }
         sql = config_map['sql_query']# common.utils.getParameterValueFromJobConfig(config, 'sql_query', 'value')
         withResults = config_map['with_results']# common.utils.getParameterValueFromJobConfig(config, 'with_results', 'value')
         cnn = self.connexion
         sqlrows = []
-        logging.info(f"Executing query to PostGRESQL :{sql}")
+        logging.debug(f"Executing query to PostGRESQL :{sql}")
         try:
             cursor = cnn.cursor()    
             cursor.execute(sql)
@@ -78,9 +79,9 @@ class DBConnexionPG(DBConnection):
     @capability_configurator 
     def executeQuery(config_map, self, config): 
         res = {
-            "status": "OK",
-            "call_result": None
-        }  
+            'status' : 'Successful',
+            'call_result': None
+        }
         sql = config_map['sql_query']# common.utils.getParameterValueFromJobConfig(config, 'sql_query', 'value')
         withResults = config_map['with_results']# common.utils.getParameterValueFromJobConfig(config, 'with_results', 'value')
         cnn = self.connexion
@@ -130,8 +131,8 @@ class DBConnexionPG(DBConnection):
     @capability_configurator
     def uploadFileToTableFromLocalfs(config_map, self, config):
         res = {
-            "status":"Ok",
-            "call_result":None
+            'status' : 'Successful',
+            'call_result': None
         }
         try:
             fs_engine_secret_name = config_map['localfs_connection'] #common.utils.getParameterValueFromJobConfig(jobconfig, 'localfs_connection', 'value')

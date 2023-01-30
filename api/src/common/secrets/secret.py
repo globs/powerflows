@@ -70,7 +70,7 @@ class SecretsManager(object):
 
     def getSecretByNameJson(self, name):
         sql_search = f"SELECT  json_secret FROM tsecrets a where a.name = '{name}';"
-        logging.info(f'Searching for secret *{name}* with query {sql_search}')
+        logging.debug(f'Searching for secret *{name}* with query {sql_search}')
         query_data = self.sqlite_execute_query(sql_search, True)
         if  query_data['size'] > 0:
             res = { "secret" : json.loads(query_data['data'][0][0]) , "size" : query_data['size']}

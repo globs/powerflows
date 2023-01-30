@@ -4,6 +4,7 @@
 ## Various Todos
 
 
+
 ### additional webpages
 - display traces realtime
 - create asset 
@@ -22,9 +23,42 @@ mime_type
 location_type
 location_path]
 
+### Jinja2 templating for querying language
+use for querying capability of data asset
+
 ### Serializing formats
 Serializer with CSV Json parquet orc arrow  parquet  with SQL capability
 https://blog.jcharistech.com/2020/01/08/how-to-convert-json-to-sql-format-in-python/
+
+
+### Connectivity capabilities: 
+#### DB
+executeQuery
+BulkFile
+OffloadToFile
+BulkRest
+
+##### PostGresql
+
+
+#### COS
+getObject
+uploadObject
+readDataSet
+writeDataset
+executeQuery
+
+##### MinIO
+##### IBM Cos
+##### Azure Blob Storage
+##### AWS S3
+##### Generic S3
+
+
+#### LOCALFS
+downloadTable
+updloadToTable
+executeQuery
 
 
 ### Job Storage
@@ -65,3 +99,5 @@ builtin
 redis/celeri
 containers
 
+#ideas
+use yield to stream queries from connection
