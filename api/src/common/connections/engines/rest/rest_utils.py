@@ -11,6 +11,8 @@ from ratelimit import limits, sleep_and_retry
 from backoff import on_exception, expo
 from common.decorators.capability_config import capability_configurator
 from common.decorators.dbtrace import trace_to_db
+from common.connections.engines.internal.multi_file_serializer import MultiSerializer
+
 
 throttling_calls_limit=1
 throttling_time_limit=20
@@ -104,8 +106,18 @@ class RestUtils():
                 self.internal_dict['jobstorage_dict_entry']['jobstorage_object_name'] = arrow_json.read_json(f"/tmp/result_files/{jobstorage_object_name}")
                 arrow_table = self.internal_dict['jobstorage_dict_entry']['jobstorage_object_name']
                 logging.debug(f"Arrow Table Structure {arrow_table}")
-                logging.debug(f"Pandas Table {arrow_table.columns}")
+                logging.debug(f"Pandas Table {arrow_table.to_pandas().head(10)}")
                 con = duckdb.connect()
                 # query the Apache Arrow Table "my_arrow_table" and return as an Arrow Table
-                results = con.execute("SELECT * FROM arrow_table").df()
-                print(f"DuckDb Table {results.head()}")
+                # results = con.execute("SELECT * FROM arrow_table").df()
+                # jsonstr = response.text
+                # logging.info(f"DuckDb Table {results.head(1)}")
+                # logging.info(con.execute("CREATE TABLE example (j JSON);"))
+                # logging.info(con.execute(f"""INSERT INTO example VALUES
+                # ('{jsonstr}');"""))
+                # logging.info(con.execute("SELECT json(j) FROM example;").fetchdf())
+                # logging.info(con.execute("SELECT json_valid(j) FROM example;").fetchdf())
+                # logging.info(con.execute("SELECT json_structure(j) FROM example;").fetchdf())
+               # multi_serializer = MultiSerializer()
+               # df = multi_serializer.json_to_dataframe(json.loads(response.text))
+               # logging.info(df.head(10))
