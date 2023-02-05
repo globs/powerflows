@@ -118,3 +118,4 @@ alias_reuse: *foo
 
 
 
+https://graviex.net/webapi/v3/markets

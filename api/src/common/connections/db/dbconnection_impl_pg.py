@@ -16,6 +16,8 @@ from common.secrets.secret import SecretsManager
 from common.decorators.capability_config import capability_configurator
 from common.decorators.dbtrace import trace_to_db
 
+
+#TODO add yaml input build helper methods 
 class DBConnexionPG(DBConnection):
 
     def __init__(self, secretname):

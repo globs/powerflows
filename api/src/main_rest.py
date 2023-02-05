@@ -115,6 +115,9 @@ def delete_secret(secret_name):
     flash('"{}" was successfully deleted!'.format(secret['name']))
     return redirect(url_for('index'))
 
+@app.route('/create_asset', methods=('GET', 'POST'))
+def create_asset():
+   return render_template('create_asset.html') 
 
 @app.route('/submit_job', methods=('GET', 'POST'))
 def submit_job():

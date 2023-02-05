@@ -26,5 +26,6 @@ id              SERIAL PRIMARY KEY,
 ts TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 asset_name              text,
 asset_type              text,
-asset_address           text
+asset_address           text,
+asset_json_def           text
 );

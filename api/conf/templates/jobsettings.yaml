@@ -58,6 +58,14 @@ jobconfig:
       - parameter:
         name: requests_list
         value:
+        - url: https://graviex.net/webapi/v3/markets
+          operation: GET
+          parameters: {}
+          data: {}
+          headers: {}
+          result_mime_type: application/json
+          jobstorage_persist_result: true
+          jobstorage_asset_address: internal.hitbtc_rest.graviex_symbols
         - url: https://api.hitbtc.com/api/3/public/currency
           operation: GET
           parameters: {}
@@ -71,7 +79,6 @@ jobconfig:
           parameters:
             symbols: 
               - symbol: {{ jobstorage.hitbtc_input.hitbtc_symbols.symbol }}
-          parameter_type: multi-value-simple
           data: {}
           headers: {}
           result_mime_type: application/json

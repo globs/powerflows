@@ -12,7 +12,7 @@ from backoff import on_exception, expo
 from common.decorators.capability_config import capability_configurator
 from common.decorators.dbtrace import trace_to_db
 from common.connections.engines.internal.multi_file_serializer import MultiSerializer
-
+import common.utils
 
 throttling_calls_limit=1
 throttling_time_limit=20
@@ -105,9 +105,10 @@ class RestUtils():
             if config_map['result_mime_type'] == 'application/json':
                 self.internal_dict['jobstorage_dict_entry']['jobstorage_object_name'] = arrow_json.read_json(f"/tmp/result_files/{jobstorage_object_name}")
                 arrow_table = self.internal_dict['jobstorage_dict_entry']['jobstorage_object_name']
-                logging.debug(f"Arrow Table Structure {arrow_table}")
-                logging.debug(f"Pandas Table {arrow_table.to_pandas().head(10)}")
+                logging.info(f"Arrow Table Structure {arrow_table}")
+                logging.info(f"Pandas Table {arrow_table.to_pandas().head(10)}")
                 con = duckdb.connect()
+                #logging.info(response.text)
                 # query the Apache Arrow Table "my_arrow_table" and return as an Arrow Table
                 # results = con.execute("SELECT * FROM arrow_table").df()
                 # jsonstr = response.text
@@ -121,3 +122,4 @@ class RestUtils():
                # multi_serializer = MultiSerializer()
                # df = multi_serializer.json_to_dataframe(json.loads(response.text))
                # logging.info(df.head(10))
+               
