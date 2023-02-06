@@ -2,6 +2,7 @@
 
 {% block content %}
     <h1>{% block title %} Powerflows admin console {% endblock %}</h1>
+    Download file <a href="http://hulk1.vps.webdock.cloud:3333/api/v1/download/script.js"> Here</a>
     <h2>Latest Job runs history</h2>
     {% for trace in traces %}
         <span class="badge badge-primary">{{ trace[0] }} - {{ trace[1] }} - {{ trace[2] }}</span>

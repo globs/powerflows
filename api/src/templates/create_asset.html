@@ -12,6 +12,16 @@
     </div>
 
     <div class="form-group">
+      <label for="title">Asset Type:</label>
+      <select class="custom-select" name="asset_type">
+        <option selected>Open this select menu</option>
+        <option value="1">job</option>
+        <option value="2">graph</option>
+        <option value="3">secret</option>
+      </select>
+    </div>
+
+    <div class="form-group">
         <label for="content">Asset YAML</label>
         <textarea name="asset_yaml" rows="10" placeholder=" enter asset YAML description here"
                   class="form-control">{{ request.form['asset_yaml'] }}</textarea>

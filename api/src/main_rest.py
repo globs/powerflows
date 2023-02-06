@@ -1,7 +1,9 @@
 from flask import send_file
 from flask import Flask, render_template, request, url_for, flash, redirect
 from flask import request
+from flask import send_from_directory
 from flask_cors import CORS
+import os
 import common.utils
 import io, json 
 import base64
@@ -9,7 +11,6 @@ import common.settings
 import logging
 from common.orchestration.jobcontrol.config import app
 #from common.orchestration.jobs.jobfactory_decorator import FlowJobFactoryDecorator
-
 from common.connections.engines.internal.metadata_manager import MetadataManager
 from common.orchestration.jobs.job_factory import FlowJobFactory
 import sqlite3
@@ -117,17 +118,26 @@ def delete_secret(secret_name):
 
 @app.route('/create_asset', methods=('GET', 'POST'))
 def create_asset():
-   return render_template('create_asset.html') 
+    if request.method == 'POST':
+        config = { "asset_name" : request.form['asset_name'],
+        "asset_type" : request.form['asset_type'],
+        "asset_yaml" : request.form['asset_yaml']
+        }
+        md_manager.createAsset(config)
+        return render_template('create_asset.html') 
+    return render_template('create_asset.html') 
 
 @app.route('/submit_job', methods=('GET', 'POST'))
 def submit_job():
     if request.method == 'POST':
-        name = request.form['name']
-        job_yaml = request.form['job_yaml']
-        logging.info(f'getting yaml job to be posted {name}: {job_yaml}')
-        flash(f'"{name}" Job was submitted successfully!')
+        asset_name = request.form['job_name']
+        asset_type = 'job'
+        job_yaml = md_manager.getAssetConfig({"asset_name": asset_name, "asset_type":asset_type})
+        logging.info(f'getting yaml job to be posted {asset_name}: {job_yaml}')
+        flash(f'"{asset_name}" Job was submitted successfully!')
         jf = FlowJobFactory(job_yaml)
         jf.executeJob()
+        flash(f'"{asset_name}" Job was executed successfully!')
         return render_template('submit_job.html', jobs=jf.job_connections_config)
         #return redirect(url_for('display_job'))
     return render_template('submit_job.html')
@@ -136,6 +146,11 @@ def submit_job():
 @app.route('/display_job', methods=('GET', 'POST'))
 def display_job():
     return render_template('display_job.html')
+
+@app.route('/api/v1/download/<string:filename>')
+def download_image(filename):
+    return send_from_directory(os.getcwd() + "/static/js", path=filename, as_attachment=True)
+
 
 #end web console
 

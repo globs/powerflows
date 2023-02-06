@@ -57,7 +57,7 @@ class DBConnexionPG(DBConnection):
         withResults = config_map['with_results']# common.utils.getParameterValueFromJobConfig(config, 'with_results', 'value')
         cnn = self.connexion
         sqlrows = []
-        logging.debug(f"Executing query to PostGRESQL :{sql}")
+        logging.info(f"Executing query to PostGRESQL :{sql}")
         try:
             cursor = cnn.cursor()    
             cursor.execute(sql)
