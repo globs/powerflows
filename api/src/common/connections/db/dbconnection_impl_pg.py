@@ -47,6 +47,35 @@ class DBConnexionPG(DBConnection):
         #close self connexion
         DBPooledConnector(self.secret_json_dict['credentials']).pg_pool.putconn(self.connexion)    
 
+    def executeQueryJsonConfig(self, config_map):
+        res = {
+            'status' : 'Successful',
+            'call_result': None
+        }
+        sql = config_map['sql_query']# common.utils.getParameterValueFromJobConfig(config, 'sql_query', 'value')
+        withResults = config_map['with_results']# common.utils.getParameterValueFromJobConfig(config, 'with_results', 'value')
+        cnn = self.connexion
+        sqlrows = []
+        logging.info(f"Executing query to PostGRESQL :{sql}")
+        try:
+            cursor = cnn.cursor()    
+            cursor.execute(sql)
+            if withResults:
+                rows = cursor.fetchall()
+                for row in rows:
+                    logging.debug(row)
+                    sqlrows.append(row)    
+            else:
+                cnn.commit()
+        except: 
+            logging.error(traceback.format_exc())
+            res['status'] = 'Failed'  
+        finally:
+            res['call_result'] = sqlrows
+            cursor.close()            
+        return res          
+        
+
     @capability_configurator 
     def executeQueryInternal(config_map, self, config): 
         res = {

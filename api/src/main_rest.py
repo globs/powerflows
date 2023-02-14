@@ -116,6 +116,9 @@ def delete_secret(secret_name):
     flash('"{}" was successfully deleted!'.format(secret['name']))
     return redirect(url_for('index'))
 
+
+## Assets metadata management
+ 
 @app.route('/create_asset', methods=('GET', 'POST'))
 def create_asset():
     if request.method == 'POST':
@@ -124,6 +127,7 @@ def create_asset():
         "asset_yaml" : request.form['asset_yaml']
         }
         md_manager.createAsset(config)
+        flash(f"{request.form['asset_name']} was created successfully!")
         return render_template('create_asset.html') 
     return render_template('create_asset.html') 
 

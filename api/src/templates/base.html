@@ -17,8 +17,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script><link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css'>
-    <link rel="stylesheet" href="static/css/navbar_style.css">
+    <link rel="stylesheet" href="/static/css/navbar_style.css">
 
+
+     <!-- highlightjs -->
+     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 </head>
 <body>
 <!-- partial:index.partial.html -->
@@ -26,11 +30,11 @@
         <!-- Sidebar  -->
         <nav id="sidebar">
             <div class="sidebar-header">
-                <h3>Powerflows</h3>
+                <h3><a href="{{url_for('index')}}">Powerflows</a></h3>
             </div>
 
             <ul class="list-unstyled components">
-                <p>Powerflows</p>
+                <p><a href="{{url_for('index')}}">Powerflows</a></p>
                 <li class="active">
                     <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Manage</a>
                     <ul class="collapse list-unstyled" id="homeSubmenu">
@@ -117,7 +121,7 @@
             </nav>
             <div class="container">
               {% for message in get_flashed_messages() %}
-              <div class="alert alert-danger">{{ message }}</div>
+              <div class="alert alert-success">{{ message }}</div>
               {% endfor %}
               {% block content %} {% endblock %}
               {% block job %} {% endblock %}
@@ -125,7 +129,7 @@
        </div>
     </div>
 <!-- partial -->
-  <script  src="static/js/script.js"></script>
+  <script  src="/static/js/script.js"></script>
 
 </body>
 </html>

@@ -101,3 +101,13 @@ containers
 
 #ideas
 use yield to stream queries from connection
+
+
+
+# Tek todos
+utils: 
+- yaml/json indenter
+test connection
+discovery db assets 
+discovery cos assets
+discovery filesystem assets 

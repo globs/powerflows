@@ -26,18 +26,11 @@ class MetadataManager(object):
               VALUES 
               ('{config['asset_name']}', '{config['asset_type']}', 'jobs.internal.{config['asset_name']}', '{config['asset_yaml']}')
         """
-        trace_config_syaml= f"""---
-        - parameter:
-            name: sql_query
-            value: |
-              {sql_query}     
-        - parameter:
-            name: with_results
-            value: false      
-        """
-        logging.info(f"Tracing with config: {trace_config_syaml}")
-        config_sql = yaml.safe_load(trace_config_syaml)
-        res_call = self.pg_internal_engine.executeQueryInternal(config_sql)
+        config_map = {}
+        config_map['sql_query'] = sql_query
+        config_map['with_results'] = False
+        logging.info(f"Creating asset with config: {config_map}")
+        res_call = self.pg_internal_engine.executeQueryJsonConfig(config_map)
         return res_call['call_result']
         
     def getAssetConfig(self, config):

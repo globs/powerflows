@@ -10,7 +10,7 @@ import common.settings
 
 class SecretsManager(object):
     def __init__(self ):
-        logging.debug('Starting secrets manager python backend')
+        logging.info('Starting secrets manager python backend')
         self.dbfilepath = common.settings.SQLLITE_DB_FILE
         self.conn = sqlite3.connect(self.dbfilepath)
         self.checkIfConfigExistsOrInit()
@@ -22,7 +22,7 @@ class SecretsManager(object):
         sql_check_if_exists = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}';"
         data = self.sqlite_execute_query(sql_check_if_exists, True)
         if data is None or len(data) == 0:
-            logging.debug('initializing sqlite db')
+            logging.info('initializing sqlite db')
             self.sqlite_execute_query("""
             CREATE TABLE tsecrets
             (
@@ -32,7 +32,7 @@ class SecretsManager(object):
             )
             """)
         else:
-            logging.debug('Secret sqlite table found, table creating skipped')
+            logging.info('Secret sqlite table found, table creating skipped')
 
         tst_minio_secret = self.pullSecret(str(common.settings.DEFAULT_MINIO_SECRET_NAME))
         tst_pg_secret = self.pullSecret(common.settings.DEFAULT_PG_SECRET_NAME)
@@ -88,7 +88,7 @@ class SecretsManager(object):
          
 
     def sqlite_execute_query(self, sql_query, withresults=False, returntype='array'):
-        logging.debug(f'Executing SQL Query {sql_query}')
+        logging.info(f'Executing SQL Query {sql_query}')
         data = self.conn.execute(sql_query)
         self.conn.commit()
         if withresults:
