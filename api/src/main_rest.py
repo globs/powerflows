@@ -1,5 +1,5 @@
 from flask import send_file
-from flask import Flask, render_template, request, url_for, flash, redirect
+from flask import Flask, render_template, request, url_for, flash, redirect, jsonify
 from flask import request
 from flask import send_from_directory
 from flask_cors import CORS
@@ -43,6 +43,27 @@ app.debug = True
 @app.route('/api/v1/docs',methods = ['POST', 'GET'])
 def get_docs():
     return 'docs to be done'
+
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
+#routes for frontend
+@app.route('/api/v1/getsecrets',methods = ['GET'])
+def get_secrets():
+    conn = get_db_connection()
+    conn.row_factory = dict_factory
+    secrets = conn.execute('SELECT * FROM tsecrets').fetchall()
+    conn.close()
+    return jsonify(secrets)
+
+
+
+@app.route('/api/v1/gettraces',methods = ['GET'])
+def get_traces():
+    return jsonify(md_manager.getTraces())
 
 # begin Web console
 @app.route('/adminconsole')
@@ -135,7 +156,7 @@ def create_asset():
 def submit_job():
     if request.method == 'POST':
         asset_name = request.form['job_name']
-        asset_type = 'job'
+        asset_type = 1
         job_yaml = md_manager.getAssetConfig({"asset_name": asset_name, "asset_type":asset_type})
         logging.info(f'getting yaml job to be posted {asset_name}: {job_yaml}')
         flash(f'"{asset_name}" Job was submitted successfully!')

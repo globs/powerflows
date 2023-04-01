@@ -1,7 +1,16 @@
 # powerflows
 
 
-## Various Todos
+## Top Todos
+Create get secrets, jobs  logs routes in backend rest api  XXX
+delete render templates in backend rest api  
+create frontend rest api with render templates XXX
+call backend rest api for json webpages metadata and actions X
+create docker container for frontend
+
+nice to have : add nginx integration
+nice to have: delegate execution of tasks in rest backend (celeri or docker/k8s)
+
 
 
 

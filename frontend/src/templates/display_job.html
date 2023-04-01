@@ -1,29 +1,6 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<meta charset="utf-8">
 
-{% block content %}
-<h1>{% block title %} Submit a new Job execution with YAML {% endblock %}</h1>
-
-<form method="post">
-    <div class="form-group">
-        <label for="title">Job Name</label>
-        <input type="text" name="job_name"
-               placeholder="job name" class="form-control"
-               value="{{ request.form['name'] }}"></input>
-    </div>
-
-    <div class="form-group">
-        <label for="content">Job YAML</label>
-        <textarea name="job_yaml" rows="10" placeholder=" enter Job YAML description here"
-                  class="form-control">{{ request.form['job_yaml'] }}</textarea>
-    </div>
-    <div class="form-group">
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <a href="{{ url_for('index')}}">Home</a>
-    </div>
-</form>
-{% endblock %}
-
-{% if jobs is defined %}
 <svg width="960" height="600"></svg>
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -266,5 +243,3 @@ function updateSimulation() {
 updateSimulation()
 
 </script>
-
-{% endif %}

@@ -71,13 +71,18 @@ def json_to_csv(data):
         return res_csv
 
 def stryaml_to_json(str_yaml):
-    logging.info('converting yaml ')
+    logging.info(f'converting yaml {str_yaml} (type {type(str_yaml)}) to json dict')
     res = yaml.safe_load(str_yaml)
     return res
 
 def strjson_to_json(str_json):
     res =json.dumps(str_json)
     return res
+
+def strjson_to_yaml(str_json):
+    json_dict =json.loads(str_json)
+    yaml_string = yaml.dump(json_dict) 
+    return yaml_string
 
 def yaml_to_json(yaml_file, outjsonfilepath):
     with open(yaml_file, 'r') as file:
@@ -156,7 +161,7 @@ def getMapFromArray(capability_config):
 
 def getEngineConfigMember(connection_type, member):
     for engine in common.settings.connection_capabilties['engines']:
-        logging.debug(f"searching engine type {connection_type} in {engine['connection_type']}")
+        logging.info(f"searching engine type {connection_type} in {engine['connection_type']}")
         if engine['connection_type'] == connection_type:
             return engine[member]
     return None
@@ -178,18 +183,19 @@ def getEngineCapabilityConfigMap(connection_type, capability_name, global_search
                     return res
     return None
 
-def getCapabilityConfigMap(capability, member):
-    for engine in common.settings.connection_capabilties['engines']:
-        logging.debug(f"searching engine type {connection_type} in {engine['connection_type']}")
-        if engine['connection_type'] == connection_type:
-            return engine[member]
-    return None
+#def getCapabilityConfigMap(capability, member):
+#    for engine in common.settings.connection_capabilties['engines']:
+#        logging.debug(f"searching engine type {connection_type} in {engine['connection_type']}")
+#        if engine['connection_type'] == connection_type:
+#            return engine[member]
+#    return None
 
 def getEngineModuleFromSecretName(secretname):
     try:
+        logging.info(f"Instantiating engine for secret name: {secretname}")
         secret_manager = SecretsManager()
         connection_type = secret_manager.getSecretByNameJson(secretname)
-        logging.debug(f"Secret for connection type found: {connection_type}")
+        logging.info(f"Secret for connection type found: {connection_type}")
         engine_module_name = getEngineConfigMember(connection_type['secret']['type'], 'module')
         class_name = getEngineConfigMember(connection_type['secret']['type'], 'class')
         logging.info(f"""
